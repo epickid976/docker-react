@@ -46,7 +46,7 @@ jobs:
   
       - name: 📦 Copy docker-compose.yml to VPS
         run: |
-          scp docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/root/docker-compose.yml
+          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/root/docker-compose.yml
   
       - name: 🚀 SSH & Deploy with Compose
         uses: appleboy/ssh-action@master
