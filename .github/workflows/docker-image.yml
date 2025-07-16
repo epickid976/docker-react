@@ -41,6 +41,9 @@ jobs:
     runs-on: ubuntu-latest
   
     steps:
+      - name: 🧾 Checkout Code
+        uses: actions/checkout@v3
+  
       - name: 📦 Copy docker-compose.yml to VPS
         run: |
           scp docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/root/docker-compose.yml
