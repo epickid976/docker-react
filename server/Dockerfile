@@ -12,7 +12,7 @@ COPY ./package.json ./package-lock.json ./
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the server files .
+# Copy the rest of the server files
 COPY . .
 
 # Expose port
