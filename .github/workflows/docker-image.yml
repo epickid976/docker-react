@@ -39,8 +39,12 @@ jobs:
   deploy-to-vps:
     needs: build-and-push
     runs-on: ubuntu-latest
-
+  
     steps:
+      - name: 📦 Copy docker-compose.yml to VPS
+        run: |
+          scp docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/root/docker-compose.yml
+  
       - name: 🚀 SSH & Deploy with Compose
         uses: appleboy/ssh-action@master
         with:
@@ -50,6 +54,5 @@ jobs:
           script: |
             docker pull epickid976/react-client:latest
             docker pull epickid976/react-server:latest
-
             docker compose -f /root/docker-compose.yml down
             docker compose -f /root/docker-compose.yml up -d --force-recreate
