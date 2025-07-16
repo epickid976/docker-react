@@ -2,7 +2,7 @@ name: React Docker CI/CD
 
 on:
   push:
-    branches: [ "main" ]  # Change if you're using a different default branch
+    branches: [ "main" ]  # Update if your main branch is named differently
 
 jobs:
   build-and-push:
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📡 SSH & Deploy on VPS
+      - name: 🚀 SSH & Deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -42,5 +42,3 @@ jobs:
             docker rm react-app || true
             docker pull epickid976/react-application:latest
             docker run -d -p 3001:3000 --name react-app epickid976/react-application:latest
-
-  
