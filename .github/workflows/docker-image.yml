@@ -52,5 +52,5 @@ jobs:
             git pull origin main
             docker pull epickid976/react-client:latest
             docker pull epickid976/react-server:latest
-            docker compose down
-            docker compose up -d --force-recreate
+            docker compose -f /opt/docker-react/docker-compose.yml down
+            docker compose -f /opt/docker-react/docker-compose.yml up -d --force-recreate
