@@ -1,14 +1,18 @@
+# server/Dockerfile
+
 # Use Node.js base image
 FROM node:20
 
 # Set working directory
 WORKDIR /app
 
+# Copy package files explicitly from build context
+COPY ./package.json ./package-lock.json ./
+
 # Install dependencies
-COPY package*.json ./
 RUN npm install
 
-# Copy app code
+# Copy the rest of the server files
 COPY . .
 
 # Expose port
