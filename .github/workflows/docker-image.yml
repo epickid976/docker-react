@@ -1,8 +1,8 @@
-name: React Docker CI/CD
+name: React Fullstack CI/CD
 
 on:
   push:
-    branches: [ "main" ]  # Update if your main branch is named differently
+    branches: [ "main" ]
 
 jobs:
   build-and-push:
@@ -18,12 +18,22 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: 🛠️ Build and Push Docker Image
+      - name: 🛠️ Build & Push Client
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./client
+          file: ./client/Dockerfile
           push: true
-          tags: epickid976/react-application:latest
+          tags: epickid976/react-client:latest
+          platforms: linux/amd64
+
+      - name: 🛠️ Build & Push Server
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          file: ./server/Dockerfile
+          push: true
+          tags: epickid976/react-server:latest
           platforms: linux/amd64
 
   deploy-to-vps:
@@ -31,14 +41,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🚀 SSH & Deploy
+      - name: 🚀 SSH & Deploy with Compose
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            docker stop react-app || true
-            docker rm react-app || true
-            docker pull epickid976/react-application:latest
-            docker run -d -p 3001:3000 --name react-app epickid976/react-application:latest
+            docker pull epickid976/react-client:latest
+            docker pull epickid976/react-server:latest
+
+            docker compose -f /root/docker-compose.yml down
+            docker compose -f /root/docker-compose.yml up -d --force-recreate
