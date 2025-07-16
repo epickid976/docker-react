@@ -4,6 +4,9 @@ on:
   push:
     branches: [ "main" ]
 
+env:
+  IMAGE_TAG: ${{ github.sha }}
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -24,7 +27,9 @@ jobs:
           context: ./client
           file: ./client/Dockerfile
           push: true
-          tags: epickid976/react-client:latest
+          tags: |
+            epickid976/react-client:latest
+            epickid976/react-client:${{ env.IMAGE_TAG }}
           platforms: linux/amd64
 
       - name: 🛠️ Build & Push Server
@@ -33,15 +38,17 @@ jobs:
           context: ./server
           file: ./server/Dockerfile
           push: true
-          tags: epickid976/react-server:latest
+          tags: |
+            epickid976/react-server:latest
+            epickid976/react-server:${{ env.IMAGE_TAG }}
           platforms: linux/amd64
 
   deploy-to-vps:
     needs: build-and-push
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: 🚀 SSH & Pull + Deploy
+      - name: 🚀 SSH & Deploy to VPS
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -50,7 +57,17 @@ jobs:
           script: |
             cd /opt/docker-react
             git pull origin main
-            docker pull epickid976/react-client:latest
-            docker pull epickid976/react-server:latest
-            docker compose -f /opt/docker-react/docker-compose.yml down
-            docker compose -f /opt/docker-react/docker-compose.yml up -d --force-recreate
+
+            echo "🧼 Removing old images"
+            docker rmi epickid976/react-client:latest || true
+            docker rmi epickid976/react-server:latest || true
+
+            echo "📥 Pulling updated images"
+            docker pull epickid976/react-client:${{ github.sha }}
+            docker pull epickid976/react-server:${{ github.sha }}
+
+            echo "🔄 Stopping current containers"
+            docker compose -f docker-compose.yml down
+
+            echo "🚀 Launching new containers"
+            docker compose -f docker-compose.yml up -d --force-recreate
