@@ -1,171 +1,304 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+/* App.css */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-light: linear-gradient(135deg, #f7e8ff, #d8f3ff);
-  --bg-dark: linear-gradient(135deg, #1f1f1f, #2a2a2a);
-
-  --card-light: rgba(255, 255, 255, 0.5);
-  --card-dark: rgba(30, 30, 30, 0.5);
-
-  --text-light: #333;
-  --text-dark: #f0f0f0;
-
-  --subtext-light: #5a5a5a;
-  --subtext-dark: #cccccc;
-
-  --button-bg-light: #6c63ff;
-  --button-bg-dark: #a29bfe;
-  --button-bg-hover-light: #4b45cc;
-  --button-bg-hover-dark: #6c5ce7;
+  --bg-light: linear-gradient(135deg, #667eea, #764ba2);
+  --bg-dark: linear-gradient(135deg, #2d1b69, #11998e);
+  --vh: 1vh; /* Fallback value */
 }
 
-* {
-  box-sizing: border-box;
+html {
+  background-color: #667eea; /* Solid fallback color */
+  height: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
 }
 
-body, html {
+body {
+  background-color: #667eea; /* Solid fallback color */
   margin: 0;
   padding: 0;
-  font-family: 'Nunito', sans-serif;
   height: 100%;
-  background: linear-gradient(135deg, #f7e8ff, #d8f3ff);
-  color-scheme: light dark;
-  /* Prevent scrolling on mobile */
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: 'Fredoka', sans-serif;
+  color: white;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+
+/* Create a large background element that covers overscroll areas */
+body::after {
+  content: "";
   position: fixed;
+  top: -100vh;
+  left: 0;
   width: 100%;
+  height: 300vh; /* Large height to cover overscroll */
+  background: var(--bg-light);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* iOS blur effect */
+body::before {
+  content: "";
+  display: none; /* Default hidden */
+}
+
+body.ios-blur::before {
+  display: block;
+  position: fixed;
+  top: 0;
+  height: 40px;
+  width: 100%;
+  z-index: 999;
+  pointer-events: none;
+  background: linear-gradient(to bottom, #5f68e3, transparent);
 }
 
 @media (prefers-color-scheme: dark) {
-  body, html {
-    background: linear-gradient(135deg, #1f1f1f, #2a2a2a);
+  html {
+    background-color: #2d1b69;
   }
+  
+  body {
+    background-color: #2d1b69;
+  }
+  
+  body::after {
+    background: var(--bg-dark);
+  }
+  
+  body.ios-blur::before {
+    background: linear-gradient(to bottom, #2d1b69, transparent);
+  }
+  
+  .app-container {
+    background-color: #2d1b69;
+  }
+}
+
+/* Additional iOS Safari specific styles */
+body.ios-safari {
+  /* Ensure proper scrolling behavior on iOS Safari */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  /* Remove problematic properties that cause glitches */
+  overscroll-behavior-y: none;
+  -webkit-overscroll-behavior-y: none;
+}
+
+body.ios-safari .app-container {
+  /* Use custom vh property for iOS Safari */
+  min-height: calc(var(--vh, 1vh) * 100);
+  /* Reduced bottom padding specifically for iOS Safari tab bar */
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 50px);
+}
+
+body.ios-safari .main-content {
+  /* Adjust min-height using custom vh for iOS Safari */
+  min-height: calc(var(--vh, 1vh) * 100 - env(safe-area-inset-top, 0px) - max(env(safe-area-inset-bottom, 0px), 50px));
+  /* Reduced bottom padding for iOS Safari */
+  padding-bottom: 40px;
 }
 
 .app-container {
-  /* Use viewport height without safe area, then handle safe area with padding */
-  height: 100vh;
+  min-height: 100vh;
+  /* Remove fixed height to allow content to expand */
   width: 100vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* Use safe area insets properly */
-  padding-top: max(24px, env(safe-area-inset-top));
-  padding-bottom: max(24px, env(safe-area-inset-bottom));
-  padding-left: max(24px, env(safe-area-inset-left));
-  padding-right: max(24px, env(safe-area-inset-right));
-  /* Ensure it takes full screen */
-  position: fixed;
+  position: relative; /* Change from absolute to relative */
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-top: env(safe-area-inset-top, 0px);
+  /* Reduced bottom padding for iOS Safari */
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 40px);
+  /* Use solid background color instead of problematic fixed attachment */
+  background-color: #667eea;
+}
+
+.bg-elements {
+  position: absolute;
   top: 0;
   left: 0;
-}
-
-.glass-card {
-  background: var(--card-light);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-radius: 24px;
-  padding: 3rem 2rem;
-  max-width: 500px;
   width: 100%;
-  text-align: center;
-  transition: background 0.4s ease;
-  /* Ensure it doesn't overflow */
-  max-height: calc(100vh - 2 * max(24px, env(safe-area-inset-top)) - 2 * max(24px, env(safe-area-inset-bottom)));
-  overflow-y: auto;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
 }
 
-@media (prefers-color-scheme: dark) {
-  .glass-card {
-    background: var(--card-dark);
-  }
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  animation: float 6s ease-in-out infinite;
+}
+
+.bg-circle-1 { width: 200px; height: 200px; top: 10%; left: -50px; animation-delay: 0s; }
+.bg-circle-2 { width: 150px; height: 150px; top: 70%; right: -30px; animation-delay: 2s; }
+.bg-circle-3 { width: 100px; height: 100px; top: 40%; left: 80%; animation-delay: 4s; }
+
+.main-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  /* Ensure minimum height but allow expansion */
+  min-height: calc(100vh - env(safe-area-inset-top, 0px) - max(env(safe-area-inset-bottom, 0px), 40px));
+  /* Reduced bottom padding for iOS Safari */
+  padding-bottom: 30px;
+}
+
+.floating-element {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease;
+}
+
+.floating-element.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.logo {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: bounce 2s infinite;
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: clamp(2.5rem, 8vw, 4rem);
   font-weight: 700;
-  color: var(--text-light);
-  margin-bottom: 0.5rem;
-  transition: color 0.3s ease;
-}
-
-@media (prefers-color-scheme: dark) {
-  .title {
-    color: var(--text-dark);
-  }
+  background: linear-gradient(45deg, #fff, #f0f9ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .tagline {
-  font-size: 1.2rem;
-  color: var(--subtext-light);
-  margin-bottom: 1rem;
-  transition: color 0.3s ease;
+  font-size: clamp(1.2rem, 4vw, 1.5rem);
+  margin-bottom: 1.5rem;
+  font-weight: 400;
 }
 
-@media (prefers-color-scheme: dark) {
-  .tagline {
-    color: var(--subtext-dark);
-  }
+.highlight {
+  background: linear-gradient(45deg, #fbbf24, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
 }
 
-.subtext {
-  font-size: 1rem;
-  color: #777;
-  margin-bottom: 2rem;
-  transition: color 0.3s ease;
+.description {
+  font-size: clamp(1rem, 3vw, 1.1rem);
+  max-width: 600px;
+  line-height: 1.6;
+  margin-bottom: 3rem;
+  opacity: 0.9;
 }
 
-@media (prefers-color-scheme: dark) {
-  .subtext {
-    color: #aaa;
-  }
+.features {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-width: 140px;
+  transition: transform 0.3s ease;
+}
+
+.feature:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  font-size: 2rem;
 }
 
 .cta-button {
-  background: var(--button-bg-light);
-  color: white;
-  font-size: 1rem;
-  padding: 0.8rem 1.8rem;
+  background: linear-gradient(135deg, #ff6b6b, #ff8e53);
   border: none;
-  border-radius: 30px;
+  padding: 1rem 3rem;
+  border-radius: 50px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+  margin-bottom: 1.5rem;
 }
 
 .cta-button:hover {
-  background: var(--button-bg-hover-light);
-  transform: scale(1.05);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(255, 107, 107, 0.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  .cta-button {
-    background: var(--button-bg-dark);
-  }
-  .cta-button:hover {
-    background: var(--button-bg-hover-dark);
-  }
+.button-icon {
+  animation: sparkle 1.5s infinite;
 }
 
-/* Responsive Tweaks */
-@media (max-width: 600px) {
-  .glass-card {
-    padding: 2rem 1.2rem;
-  }
+.platform-badges {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
 
-  .title {
-    font-size: 2rem;
-  }
+.platform-badge {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 6px 12px;
+  border-radius: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
 
-  .tagline {
-    font-size: 1rem;
-  }
+.footer-note {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  /* Reduced padding for the footer note on iOS */
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 20px);
+  margin-bottom: 10px;
+}
 
-  .subtext {
-    font-size: 0.95rem;
-  }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
 
-  .cta-button {
-    width: 100%;
-  }
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
 }
