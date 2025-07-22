@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap');
 
 :root {
+  /* Keep original gradients */
   --bg-light: linear-gradient(135deg, #667eea, #764ba2);
   --bg-dark: linear-gradient(135deg, #2d1b69, #11998e);
   --vh: 1vh; /* Fallback value */
@@ -23,22 +24,11 @@ body {
   overflow-y: auto;
   font-family: 'Fredoka', sans-serif;
   color: white;
-  overscroll-behavior: none;
+  /* Allow natural iOS bounce behavior */
+  overscroll-behavior-x: none; /* Only prevent horizontal overscroll */
+  overscroll-behavior-y: auto; /* Allow vertical bounce */
   -webkit-overflow-scrolling: touch;
   position: relative;
-}
-
-/* Create a large background element that covers overscroll areas */
-body::after {
-  content: "";
-  position: fixed;
-  top: -100vh;
-  left: 0;
-  width: 100%;
-  height: 300vh; /* Large height to cover overscroll */
-  background: var(--bg-light);
-  z-index: -1;
-  pointer-events: none;
 }
 
 /* iOS blur effect */
@@ -67,16 +57,16 @@ body.ios-blur::before {
     background-color: #2d1b69;
   }
   
-  body::after {
-    background: var(--bg-dark);
-  }
-  
   body.ios-blur::before {
     background: linear-gradient(to bottom, #2d1b69, transparent);
   }
   
   .app-container {
-    background-color: #2d1b69;
+    background: var(--bg-dark);
+    background-size: 100% 150vh; /* Same extended sizing */
+    background-position: center top;
+    background-attachment: local;
+    background-repeat: no-repeat;
   }
 }
 
@@ -85,9 +75,11 @@ body.ios-safari {
   /* Ensure proper scrolling behavior on iOS Safari */
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  /* Remove problematic properties that cause glitches */
-  overscroll-behavior-y: none;
-  -webkit-overscroll-behavior-y: none;
+  /* Allow natural bounce but prevent horizontal overscroll */
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: auto;
+  -webkit-overscroll-behavior-x: none;
+  -webkit-overscroll-behavior-y: auto;
 }
 
 body.ios-safari .app-container {
@@ -95,6 +87,8 @@ body.ios-safari .app-container {
   min-height: calc(var(--vh, 1vh) * 100);
   /* Reduced bottom padding specifically for iOS Safari tab bar */
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 50px);
+  /* Ensure gradient extends properly on iOS Safari */
+  background-size: 100% 200vh; /* Extra extension for iOS Safari overscroll */
 }
 
 body.ios-safari .main-content {
@@ -114,8 +108,12 @@ body.ios-safari .main-content {
   padding-top: env(safe-area-inset-top, 0px);
   /* Reduced bottom padding for iOS Safari */
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 40px);
-  /* Use solid background color instead of problematic fixed attachment */
-  background-color: #667eea;
+  /* Use the gradient background and extend it for overscroll */
+  background: var(--bg-light);
+  background-size: 100% 150vh; /* Extend gradient beyond viewport */
+  background-position: center top;
+  background-attachment: local; /* Moves with content for better overscroll */
+  background-repeat: no-repeat;
 }
 
 .bg-elements {
