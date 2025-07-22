@@ -36,3 +36,159 @@
     transform: rotate(360deg);
   }
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+
+:root {
+  --bg-light: linear-gradient(135deg, #f7e8ff, #d8f3ff);
+  --bg-dark: linear-gradient(135deg, #1f1f1f, #2a2a2a);
+
+  --card-light: rgba(255, 255, 255, 0.5);
+  --card-dark: rgba(30, 30, 30, 0.5);
+
+  --text-light: #333;
+  --text-dark: #f0f0f0;
+
+  --subtext-light: #5a5a5a;
+  --subtext-dark: #cccccc;
+
+  --button-bg-light: #6c63ff;
+  --button-bg-dark: #a29bfe;
+  --button-bg-hover-light: #4b45cc;
+  --button-bg-hover-dark: #6c5ce7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Nunito', sans-serif;
+  height: 100%;
+  background: var(--bg-light);
+  transition: background 0.4s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: var(--bg-dark);
+  }
+}
+
+.app-container {
+  height: 100dvh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.glass-card {
+  background: var(--card-light);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  transition: background 0.4s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .glass-card {
+    background: var(--card-dark);
+  }
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .title {
+    color: var(--text-dark);
+  }
+}
+
+.tagline {
+  font-size: 1.2rem;
+  color: var(--subtext-light);
+  margin-bottom: 1rem;
+  transition: color 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tagline {
+    color: var(--subtext-dark);
+  }
+}
+
+.subtext {
+  font-size: 1rem;
+  color: #777;
+  margin-bottom: 2rem;
+  transition: color 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .subtext {
+    color: #aaa;
+  }
+}
+
+.cta-button {
+  background: var(--button-bg-light);
+  color: white;
+  font-size: 1rem;
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.cta-button:hover {
+  background: var(--button-bg-hover-light);
+  transform: scale(1.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  .cta-button {
+    background: var(--button-bg-dark);
+  }
+  .cta-button:hover {
+    background: var(--button-bg-hover-dark);
+  }
+}
+
+/* Responsive Tweaks */
+@media (max-width: 600px) {
+  .glass-card {
+    padding: 2rem 1.2rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .tagline {
+    font-size: 1rem;
+  }
+
+  .subtext {
+    font-size: 0.95rem;
+  }
+
+  .cta-button {
+    width: 100%;
+  }
+}

@@ -1,23 +1,20 @@
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload it.
+    <div className="app-container">
+      <div className="glass-card">
+        <h1 className="title">EchoPath</h1>
+        <p className="tagline">
+          Where learning to speak feels like playing with a friend.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <p className="subtext">
+          A joyful communication journey — built for children with autism, guided by their favorite virtual pet.
+        </p>
+        <button className="cta-button" onClick={() => alert("Coming soon to Vision Pro, iOS, and Web!")}>
+          Discover the Path
+        </button>
+      </div>
     </div>
   );
 }

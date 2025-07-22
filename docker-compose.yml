@@ -11,3 +11,18 @@ services:
     ports:
       - "5001:5000"
     restart: always
+
+#services:
+#  client:
+#    build:
+#      context: ./client
+#    ports:
+#      - "3001:3000"
+#    restart: always
+#
+#  server:
+#    build:
+#      context: ./server
+#    ports:
+#      - "5001:5000"
+#    restart: always
