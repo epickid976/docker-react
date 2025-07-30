@@ -1,121 +1,633 @@
-/* App.css */
+/* App.css - Cross-Platform Compatible */
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Keep original gradients */
+  /* Color variables with fallbacks */
+  --primary-light: #667eea;
+  --primary-dark: #2d1b69;
+  --secondary-light: #764ba2;
+  --secondary-dark: #11998e;
+  --accent-orange: #fbbf24;
+  --accent-orange-dark: #f59e0b;
+  --text-white: #ffffff;
+  --text-white-90: rgba(255, 255, 255, 0.9);
+  --glass-light: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  
+  /* Gradients */
   --bg-light: linear-gradient(135deg, #667eea, #764ba2);
   --bg-dark: linear-gradient(135deg, #2d1b69, #11998e);
-  --vh: 1vh; /* Fallback value */
+  --text-gradient-light: linear-gradient(45deg, #fff, #f0f9ff);
+  --text-gradient-accent: linear-gradient(45deg, #fbbf24, #f59e0b);
+  --button-gradient: linear-gradient(135deg, #ff6b6b, #ff8e53);
+  
+  /* Viewport units with fallbacks */
+  --vh: 1vh;
+  --vw: 1vw;
+  --actual-vh: 100vh;
+  --actual-vw: 100vw;
+  
+  /* Safe area insets with fallbacks */
+  --safe-top: 0px;
+  --safe-bottom: 0px;
+  --safe-left: 0px;
+  --safe-right: 0px;
+  
+  /* Navigation height */
+  --nav-height: 70px;
+}
+
+/* Enhanced feature detection and fallbacks */
+@supports (padding: env(safe-area-inset-top)) {
+  :root {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+  }
+}
+
+/* Base styles with cross-browser compatibility */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 html {
-  background-color: #667eea; /* Solid fallback color */
+  background-color: var(--primary-light);
+  background-color: #667eea; /* Fallback */
   height: 100%;
   min-height: 100%;
   overflow-x: hidden;
+  /* Better text rendering */
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Smooth scrolling with fallback */
+  scroll-behavior: smooth;
 }
 
 body {
-  background-color: #667eea; /* Solid fallback color */
+  background-color: var(--primary-light);
+  background-color: #667eea; /* Fallback */
   margin: 0;
   padding: 0;
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  font-family: 'Fredoka', sans-serif;
-  color: white;
-  /* Allow natural iOS bounce behavior */
-  overscroll-behavior-x: none; /* Only prevent horizontal overscroll */
-  overscroll-behavior-y: auto; /* Allow vertical bounce */
-  -webkit-overflow-scrolling: touch;
-  position: relative;
-}
-
-/* iOS blur effect */
-body::before {
-  content: "";
-  display: none; /* Default hidden */
-}
-
-body.ios-blur::before {
-  display: block;
-  position: fixed;
-  top: 0;
-  height: 40px;
-  width: 100%;
-  z-index: 999;
-  pointer-events: none;
-  background: linear-gradient(to bottom, #5f68e3, transparent);
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    background-color: #2d1b69;
-  }
+  font-family: 'Fredoka', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text-white);
+  color: white; /* Fallback */
   
-  body {
-    background-color: #2d1b69;
-  }
-  
-  body.ios-blur::before {
-    background: linear-gradient(to bottom, #2d1b69, transparent);
-  }
-  
-  .app-container {
-    background: var(--bg-dark);
-    background-size: 100% 150vh; /* Same extended sizing */
-    background-position: center top;
-    background-attachment: local;
-    background-repeat: no-repeat;
-  }
-}
-
-/* Additional iOS Safari specific styles */
-body.ios-safari {
-  /* Ensure proper scrolling behavior on iOS Safari */
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
-  /* Allow natural bounce but prevent horizontal overscroll */
+  /* Enhanced overscroll behavior */
   overscroll-behavior-x: none;
   overscroll-behavior-y: auto;
   -webkit-overscroll-behavior-x: none;
   -webkit-overscroll-behavior-y: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  /* Better font rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  
+  /* Performance optimizations */
+  transform: translateZ(0);
+  will-change: scroll-position;
 }
 
-body.ios-safari .app-container {
-  /* Use custom vh property for iOS Safari */
+/* =========================
+   NAVIGATION STYLES
+   ========================= */
+.navigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding-top: var(--safe-top);
+  height: calc(var(--nav-height) + var(--safe-top));
+  transform: translateZ(0);
+}
+
+.navigation.scrolled {
+  background: rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.no-backdrop-filter .navigation {
+  background: rgba(102, 126, 234, 0.95);
+}
+
+.no-backdrop-filter .navigation.scrolled {
+  background: rgba(102, 126, 234, 0.98);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: var(--nav-height);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: white;
+  text-decoration: none;
+  transform: translateZ(0);
+}
+
+.nav-logo {
+  font-size: 1.5rem;
+  animation: bounce 2s infinite;
+}
+
+.nav-title {
+  background: var(--text-gradient-light);
+  background: linear-gradient(45deg, #fff, #f0f9ff); /* Fallback */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: white; /* Fallback */
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  transform: translateZ(0);
+}
+
+.nav-item:hover,
+.nav-item:focus {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px) translateZ(0);
+}
+
+.nav-item.active {
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  gap: 4px;
+  transform: translateZ(0);
+}
+
+.nav-toggle span {
+  width: 24px;
+  height: 2px;
+  background: white;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 16px;
+  }
+  
+  .nav-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    gap: 0;
+    padding: 20px 0;
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 1001;
+  }
+  
+  .no-backdrop-filter .nav-menu {
+    background: rgba(102, 126, 234, 0.95);
+  }
+  
+  .nav-menu.open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .nav-item {
+    width: 100%;
+    text-align: center;
+    padding: 16px 24px;
+    border-radius: 0;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .nav-item:last-child {
+    border-bottom: none;
+  }
+  
+  .nav-item:hover,
+  .nav-item:focus,
+  .nav-item.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+  
+  .nav-toggle {
+    display: flex;
+    z-index: 1002;
+  }
+  
+  .nav-menu.open + .nav-toggle span:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+  }
+  
+  .nav-menu.open + .nav-toggle span:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .nav-menu.open + .nav-toggle span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+  }
+}
+
+/* =========================
+   SECTION STYLES
+   ========================= */
+.section {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--nav-height) + var(--safe-top) + 40px) 0 80px;
+}
+
+.hero-section {
+  min-height: 100vh;
+  min-height: var(--actual-vh);
   min-height: calc(var(--vh, 1vh) * 100);
-  /* Reduced bottom padding specifically for iOS Safari tab bar */
-  padding-bottom: max(env(safe-area-inset-bottom, 0px), 50px);
-  /* Ensure gradient extends properly on iOS Safari */
-  background-size: 100% 200vh; /* Extra extension for iOS Safari overscroll */
-}
-
-body.ios-safari .main-content {
-  /* Adjust min-height using custom vh for iOS Safari */
-  min-height: calc(var(--vh, 1vh) * 100 - env(safe-area-inset-top, 0px) - max(env(safe-area-inset-bottom, 0px), 50px));
-  /* Reduced bottom padding for iOS Safari */
   padding-bottom: 40px;
 }
 
-.app-container {
-  min-height: 100vh;
-  /* Remove fixed height to allow content to expand */
-  width: 100vw;
-  position: relative; /* Change from absolute to relative */
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding-top: env(safe-area-inset-top, 0px);
-  /* Reduced bottom padding for iOS Safari */
-  padding-bottom: max(env(safe-area-inset-bottom, 0px), 40px);
-  /* Use the gradient background and extend it for overscroll */
-  background: var(--bg-light);
-  background-size: 100% 150vh; /* Extend gradient beyond viewport */
-  background-position: center top;
-  background-attachment: local; /* Moves with content for better overscroll */
-  background-repeat: no-repeat;
+.content-section {
+  min-height: auto;
+  padding: 80px 0;
+  background: rgba(255, 255, 255, 0.02);
 }
 
+/* Remove alternating section colors - keep consistent */
+.content-section:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.section-content {
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.section-content h2 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 700;
+  margin-bottom: 2rem;
+  background: var(--text-gradient-light);
+  background: linear-gradient(45deg, #fff, #f0f9ff); /* Fallback */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: white; /* Fallback */
+}
+
+.section-content p {
+  font-size: clamp(1.1rem, 3vw, 1.2rem);
+  line-height: 1.6;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+/* About Section Styles */
+.about-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.about-feature {
+  background: var(--glass-light);
+  background: rgba(255, 255, 255, 0.15); /* Fallback */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 2rem 1.5rem;
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Fallback */
+  transition: transform 0.3s ease;
+  transform: translateZ(0);
+}
+
+.about-feature:hover {
+  transform: translateY(-5px) translateZ(0);
+}
+
+.about-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.about-feature h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.about-feature p {
+  font-size: 1rem;
+  line-height: 1.5;
+  opacity: 0.8;
+  margin: 0;
+}
+
+/* Testimonials Section Styles */
+.testimonials-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.testimonial {
+  background: var(--glass-light);
+  background: rgba(255, 255, 255, 0.15); /* Fallback */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Fallback */
+  text-align: left;
+  transform: translateZ(0);
+}
+
+.testimonial p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.testimonial span {
+  font-weight: 600;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+/* Contact Section Styles */
+.contact-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.contact-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background: var(--glass-light);
+  background: rgba(255, 255, 255, 0.15); /* Fallback */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 2rem 1.5rem;
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Fallback */
+  transition: transform 0.3s ease;
+  transform: translateZ(0);
+  cursor: pointer;
+}
+
+.contact-item:hover {
+  transform: translateY(-5px) translateZ(0);
+}
+
+.contact-icon {
+  font-size: 2.5rem;
+}
+
+.contact-item span {
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Fallbacks for backdrop-filter - all use same opacity */
+.no-backdrop-filter .about-feature,
+.no-backdrop-filter .testimonial,
+.no-backdrop-filter .contact-item {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.footer {
+  padding: 40px 0;
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Dark mode support - consolidated */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .floating-element {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  
+  .navigation {
+    transition: none !important;
+  }
+  
+  .nav-item {
+    transition: none !important;
+  }
+}
+
+/* Enhanced mobile device support */
+.mobile-device {
+  /* Better touch handling */
+  touch-action: manipulation;
+}
+
+.mobile-device * {
+  /* Prevent zoom on form inputs */
+  font-size: 16px;
+}
+
+.mobile-device .cta-button {
+  font-size: 16px; /* Prevent zoom on iOS */
+  /* Better touch target */
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.mobile-device .nav-item {
+  font-size: 16px; /* Prevent zoom on iOS */
+  min-height: 44px;
+}
+
+/* iOS specific optimizations */
+.ios-device {
+  /* Better momentum scrolling */
+  -webkit-overflow-scrolling: touch;
+}
+
+.ios-safari {
+  /* Handle Safari's changing viewport */
+  height: var(--actual-vh);
+  height: 100vh; /* Fallback */
+}
+
+.ios-safari .app-container {
+  min-height: var(--actual-vh);
+  min-height: calc(var(--vh, 1vh) * 100); /* Enhanced fallback */
+  min-height: 100vh; /* Basic fallback */
+  padding-bottom: calc(var(--safe-bottom) + 20px);
+  padding-bottom: 50px; /* Fallback */
+}
+
+.ios-safari .main-content {
+  min-height: calc(var(--actual-vh) - var(--safe-top) - var(--safe-bottom) - 40px);
+  min-height: calc(var(--vh, 1vh) * 100 - 90px); /* Fallback */
+  padding-bottom: calc(var(--safe-bottom) + 20px);
+  padding-bottom: 40px; /* Fallback */
+}
+
+.ios-safari .navigation {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Android specific optimizations */
+.android-device {
+  /* Better performance on Android */
+  will-change: scroll-position;
+}
+
+.android-chrome .app-container {
+  /* Handle Chrome's address bar */
+  min-height: var(--actual-vh);
+  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: 100vh; /* Fallback */
+}
+
+.android-samsung .app-container {
+  /* Samsung browser specific fixes */
+  background-attachment: scroll; /* Samsung browser doesn't handle local well */
+}
+
+/* High DPI display optimizations */
+.high-dpi {
+  /* Better rendering on high DPI screens */
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.high-dpi .logo {
+  /* Sharper emoji rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Main container with enhanced compatibility */
+.app-container {
+  min-height: 100vh;
+  min-height: var(--actual-vh);
+  min-height: calc(var(--vh, 1vh) * 100);
+  width: 100vw;
+  width: var(--actual-vw);
+  width: calc(var(--vw, 1vw) * 100);
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  
+  /* Safe area support */
+  padding-top: 0; /* Navigation handles top padding */
+  padding-bottom: calc(var(--safe-bottom) + 20px);
+  padding-bottom: 40px; /* Fallback */
+  padding-left: var(--safe-left);
+  padding-left: 0px; /* Fallback */
+  padding-right: var(--safe-right);
+  padding-right: 0px; /* Fallback */
+  
+  /* Enhanced gradient background */
+  background: var(--bg-light);
+  background: linear-gradient(135deg, #667eea, #764ba2); /* Fallback */
+  background-size: 100% 150vh;
+  background-position: center top;
+  background-attachment: local;
+  background-repeat: no-repeat;
+  
+  /* Performance optimizations */
+  transform: translateZ(0);
+  will-change: scroll-position;
+}
+
+/* Enhanced background elements */
 .bg-elements {
   position: absolute;
   top: 0;
@@ -124,72 +636,133 @@ body.ios-safari .main-content {
   height: 100%;
   pointer-events: none;
   z-index: 1;
+  /* Performance optimization */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .bg-circle {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--glass-light);
+  background: rgba(255, 255, 255, 0.1); /* Fallback */
   animation: float 6s ease-in-out infinite;
+  /* Performance optimizations */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
-.bg-circle-1 { width: 200px; height: 200px; top: 10%; left: -50px; animation-delay: 0s; }
-.bg-circle-2 { width: 150px; height: 150px; top: 70%; right: -30px; animation-delay: 2s; }
-.bg-circle-3 { width: 100px; height: 100px; top: 40%; left: 80%; animation-delay: 4s; }
+.bg-circle-1 { 
+  width: 200px; 
+  height: 200px; 
+  top: 10%; 
+  left: -50px; 
+  animation-delay: 0s; 
+}
 
-.main-content {
+.bg-circle-2 { 
+  width: 150px; 
+  height: 150px; 
+  top: 70%; 
+  right: -30px; 
+  animation-delay: 2s; 
+}
+
+.bg-circle-3 { 
+  width: 100px; 
+  height: 100px; 
+  top: 40%; 
+  left: 80%; 
+  animation-delay: 4s; 
+}
+
+/* Enhanced main content - Higher specificity for Tailwind compatibility */
+.app-container .main-content {
   position: relative;
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 24px !important; /* Force override if needed */
   text-align: center;
-  /* Ensure minimum height but allow expansion */
-  min-height: calc(100vh - env(safe-area-inset-top, 0px) - max(env(safe-area-inset-bottom, 0px), 40px));
-  /* Reduced bottom padding for iOS Safari */
-  padding-bottom: 30px;
+  
+  /* Enhanced viewport handling */
+  min-height: calc(100vh - var(--nav-height) - var(--safe-top) - var(--safe-bottom) - 40px);
+  min-height: calc(var(--vh, 1vh) * 100 - var(--nav-height) - 40px); /* Fallback */
+  padding-bottom: calc(var(--safe-bottom) + 20px) !important;
+  padding-bottom: 30px !important; /* Fallback */
+  
+  /* Performance optimization */
+  transform: translateZ(0);
 }
 
+/* Enhanced floating elements */
 .floating-element {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(30px) translateZ(0);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Fallback for older browsers */
   transition: all 0.8s ease;
+  will-change: transform, opacity;
 }
 
 .floating-element.visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) translateZ(0);
 }
 
+/* Enhanced typography */
 .logo {
-  font-size: 4rem;
+  font-size: clamp(3rem, 10vw, 4rem);
   margin-bottom: 1rem;
   animation: bounce 2s infinite;
+  /* Performance optimization */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .title {
   font-size: clamp(2.5rem, 8vw, 4rem);
   font-weight: 700;
-  background: linear-gradient(45deg, #fff, #f0f9ff);
+  background: var(--text-gradient-light);
+  background: linear-gradient(45deg, #fff, #f0f9ff); /* Fallback */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  color: white; /* Fallback for unsupported browsers */
+  margin: 0;
+  line-height: 1.1;
+}
+
+/* Fallback for browsers that don't support background-clip: text */
+.no-custom-properties .title {
+  color: white;
+  background: none;
+  -webkit-text-fill-color: unset;
 }
 
 .tagline {
   font-size: clamp(1.2rem, 4vw, 1.5rem);
   margin-bottom: 1.5rem;
   font-weight: 400;
+  line-height: 1.4;
 }
 
 .highlight {
-  background: linear-gradient(45deg, #fbbf24, #f59e0b);
+  background: var(--text-gradient-accent);
+  background: linear-gradient(45deg, #fbbf24, #f59e0b); /* Fallback */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  color: #fbbf24; /* Fallback */
   font-weight: 600;
+}
+
+.no-custom-properties .highlight {
+  color: #fbbf24;
+  background: none;
+  -webkit-text-fill-color: unset;
 }
 
 .description {
@@ -200,61 +773,104 @@ body.ios-safari .main-content {
   opacity: 0.9;
 }
 
+/* Enhanced features section */
 .features {
   display: flex;
-  gap: 2rem;
+  gap: clamp(1rem, 4vw, 2rem);
   margin-bottom: 3rem;
   flex-wrap: wrap;
   justify-content: center;
+  width: 100%;
 }
 
 .feature {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(255, 255, 255, 0.15);
+  /* Enhanced glass effect with fallbacks */
+  background: var(--glass-light);
+  background: rgba(255, 255, 255, 0.15); /* Fallback */
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 1.5rem 1rem;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Fallback */
   min-width: 140px;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform 0.3s ease; /* Fallback */
+  /* Performance optimization */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
-.feature:hover {
-  transform: translateY(-5px);
+/* Fallback for browsers without backdrop-filter support */
+.no-backdrop-filter .feature {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.feature:hover,
+.feature:focus {
+  transform: translateY(-5px) translateZ(0);
 }
 
 .feature-icon {
   font-size: 2rem;
+  margin-bottom: 0.5rem;
+  /* Better emoji rendering */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
 }
 
+/* Enhanced CTA button */
 .cta-button {
-  background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+  background: var(--button-gradient);
+  background: linear-gradient(135deg, #ff6b6b, #ff8e53); /* Fallback */
   border: none;
   padding: 1rem 3rem;
   border-radius: 50px;
-  color: white;
-  font-size: 1.1rem;
+  color: var(--text-white);
+  color: white; /* Fallback */
+  font-size: clamp(1rem, 3vw, 1.1rem);
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.3s ease; /* Fallback */
   box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
   margin-bottom: 1.5rem;
+  /* Better touch targets */
+  min-height: 44px;
+  min-width: 200px;
+  /* Performance optimizations */
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
+  /* Better text rendering */
+  text-decoration: none;
+  font-family: inherit;
 }
 
-.cta-button:hover {
-  transform: translateY(-3px);
+.cta-button:hover,
+.cta-button:focus,
+.cta-button.hovered {
+  transform: translateY(-3px) translateZ(0);
   box-shadow: 0 12px 35px rgba(255, 107, 107, 0.6);
+}
+
+.cta-button:active {
+  transform: translateY(-1px) translateZ(0);
 }
 
 .button-icon {
   animation: sparkle 1.5s infinite;
+  /* Performance optimization */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
+/* Enhanced platform badges */
 .platform-badges {
   display: flex;
   gap: 0.75rem;
@@ -262,41 +878,412 @@ body.ios-safari .main-content {
   flex-wrap: wrap;
   margin-top: 0.5rem;
   margin-bottom: 1rem;
+  width: 100%;
 }
 
 .platform-badge {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--glass-light);
+  background: rgba(255, 255, 255, 0.15); /* Fallback */
   backdrop-filter: blur(10px);
-  padding: 6px 12px;
+  -webkit-backdrop-filter: blur(10px);
+  padding: 8px 16px;
   border-radius: 30px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 0.85rem;
   font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Fallback */
+  /* Performance optimization */
+  transform: translateZ(0);
+}
+
+.no-backdrop-filter .platform-badge {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .footer-note {
   font-size: 0.9rem;
   opacity: 0.8;
-  /* Reduced padding for the footer note on iOS */
-  padding-bottom: max(env(safe-area-inset-bottom, 0px), 20px);
+  padding-bottom: calc(var(--safe-bottom) + 10px);
+  padding-bottom: 20px; /* Fallback */
   margin-bottom: 10px;
+  text-align: center;
 }
 
+/* Enhanced animations with better performance */
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
+  0%, 100% { 
+    transform: translateY(0) translateZ(0); 
+  }
+  50% { 
+    transform: translateY(-20px) translateZ(0); 
+  }
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-10px); }
-  60% { transform: translateY(-5px); }
+  0%, 20%, 50%, 80%, 100% { 
+    transform: translateY(0) translateZ(0); 
+  }
+  40% { 
+    transform: translateY(-10px) translateZ(0); 
+  }
+  60% { 
+    transform: translateY(-5px) translateZ(0); 
+  }
 }
 
 @keyframes sparkle {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.2); }
+  0%, 100% { 
+    transform: scale(1) translateZ(0); 
+  }
+  50% { 
+    transform: scale(1.2) translateZ(0); 
+  }
+}
+
+/* Enhanced responsive design */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 16px;
+  }
+  
+  .features {
+    gap: 1rem;
+  }
+  
+  .feature {
+    min-width: 120px;
+    padding: 1rem 0.75rem;
+    /* Ensure consistent background on mobile */
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .cta-button {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+  }
+  
+  .platform-badges {
+    gap: 0.5rem;
+  }
+  
+  .platform-badge {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    /* Ensure consistent background on mobile */
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .section-content {
+    padding: 0 16px;
+  }
+  
+  /* New content sections responsive */
+  .about-features {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  .about-feature {
+    padding: 1.5rem 1rem;
+    /* Ensure consistent background on mobile */
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .about-icon {
+    font-size: 2.5rem;
+  }
+  
+  .testimonials-preview {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  .testimonial {
+    padding: 1.5rem;
+    /* Ensure consistent background on mobile */
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .contact-info {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  .contact-item {
+    padding: 1.5rem 1rem;
+    /* Ensure consistent background on mobile */
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .contact-icon {
+    font-size: 2rem;
+  }
+  
+  .content-section {
+    padding: 60px 0;
+    /* Ensure consistent section background on mobile */
+    background: rgba(255, 255, 255, 0.02);
+  }
+  
+  .section {
+    padding: calc(var(--nav-height) + var(--safe-top) + 20px) 0 60px;
+  }
+  
+  /* Override backdrop-filter fallbacks on mobile for consistency */
+  .no-backdrop-filter .feature,
+  .no-backdrop-filter .platform-badge,
+  .no-backdrop-filter .about-feature,
+  .no-backdrop-filter .testimonial,
+  .no-backdrop-filter .contact-item {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 12px;
+  }
+  
+  .description {
+    margin-bottom: 2rem;
+  }
+  
+  .features {
+    margin-bottom: 2rem;
+  }
+  
+  .feature {
+    /* Maintain consistent background on small mobile */
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .platform-badge {
+    /* Maintain consistent background on small mobile */
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .section-content {
+    padding: 0 12px;
+  }
+  
+  .about-features {
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .about-feature {
+    padding: 1.25rem 0.75rem;
+    /* Maintain consistent background on small mobile */
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .about-feature h3 {
+    font-size: 1.1rem;
+  }
+  
+  .about-feature p {
+    font-size: 0.9rem;
+  }
+  
+  .testimonials-preview {
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .testimonial {
+    padding: 1.25rem;
+    /* Maintain consistent background on small mobile */
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .testimonial p {
+    font-size: 1rem;
+  }
+  
+  .contact-info {
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .contact-item {
+    padding: 1.25rem 0.75rem;
+    /* Maintain consistent background on small mobile */
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .contact-item span {
+    font-size: 0.9rem;
+  }
+  
+  .content-section {
+    padding: 40px 0;
+    /* Maintain consistent section background on small mobile */
+    background: rgba(255, 255, 255, 0.02);
+  }
+  
+  .section {
+    padding: calc(var(--nav-height) + var(--safe-top) + 20px) 0 40px;
+  }
+  
+  /* Override backdrop-filter fallbacks on small mobile for consistency */
+  .no-backdrop-filter .feature,
+  .no-backdrop-filter .platform-badge,
+  .no-backdrop-filter .about-feature,
+  .no-backdrop-filter .testimonial,
+  .no-backdrop-filter .contact-item {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Dark mode updates for new sections */
+@media (prefers-color-scheme: dark) {
+  html {
+    background-color: var(--primary-dark);
+    background-color: #2d1b69; /* Fallback */
+  }
+  
+  body {
+    background-color: var(--primary-dark);
+    background-color: #2d1b69; /* Fallback */
+  }
+  
+  .app-container {
+    background: var(--bg-dark);
+    background: linear-gradient(135deg, #2d1b69, #11998e); /* Fallback */
+  }
+  
+  .content-section {
+    background: rgba(255, 255, 255, 0.02);
+  }
+  
+  .content-section:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+  }
+  
+  .navigation {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  
+  .navigation.scrolled {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  
+  .no-backdrop-filter .navigation {
+    background: rgba(45, 27, 105, 0.95);
+  }
+  
+  .no-backdrop-filter .navigation.scrolled {
+    background: rgba(45, 27, 105, 0.98);
+  }
+  
+  .no-backdrop-filter .nav-menu {
+    background: rgba(45, 27, 105, 0.95);
+  }
+  
+  /* Mobile dark mode navigation */
+  @media (max-width: 768px) {
+    .no-backdrop-filter .nav-menu {
+      background: rgba(45, 27, 105, 0.95);
+    }
+    
+    /* Dark mode mobile glass effects consistency */
+    .content-section {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .feature,
+    .platform-badge,
+    .about-feature,
+    .testimonial,
+    .contact-item {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .no-backdrop-filter .feature,
+    .no-backdrop-filter .platform-badge,
+    .no-backdrop-filter .about-feature,
+    .no-backdrop-filter .testimonial,
+    .no-backdrop-filter .contact-item {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    /* Dark mode small mobile consistency */
+    .content-section {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .feature,
+    .platform-badge,
+    .about-feature,
+    .testimonial,
+    .contact-item {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .no-backdrop-filter .feature,
+    .no-backdrop-filter .platform-badge,
+    .no-backdrop-filter .about-feature,
+    .no-backdrop-filter .testimonial,
+    .no-backdrop-filter .contact-item {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  }
+  
+  .no-backdrop-filter .about-feature,
+  .no-backdrop-filter .testimonial,
+  .no-backdrop-filter .contact-item {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Enhanced accessibility */
+@media (prefers-contrast: high) {
+  .feature {
+    border: 2px solid rgba(255, 255, 255, 0.6);
+  }
+  
+  .platform-badge {
+    border: 2px solid rgba(255, 255, 255, 0.6);
+  }
+  
+  .cta-button {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+  }
+  
+  .navigation {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .nav-item.active {
+    border: 2px solid rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Focus styles for better accessibility */
+.cta-button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+.feature:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+.nav-item:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+.nav-toggle:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
 }

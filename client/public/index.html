@@ -3,44 +3,57 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- Enhanced viewport meta tag for better cross-platform support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover, user-scalable=yes" />
+    
+    <!-- PWA and mobile app capabilities -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#5f68e3" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#2d1b69" media="(prefers-color-scheme: dark)">
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="EchoPath">
+    <meta name="apple-mobile-web-app-title" content="EchoPath">
+    
+    <!-- Theme colors for different browsers and modes -->
+    <meta name="theme-color" content="#5f68e3" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#2d1b69" media="(prefers-color-scheme: dark)">
+    <meta name="msapplication-TileColor" content="#5f68e3">
+    <meta name="msapplication-navbutton-color" content="#5f68e3">
+    
+    <!-- Better description for SEO and app stores -->
+    <meta name="description" content="EchoPath - Learning language through play & friendship. An immersive learning companion for children with autism." />
+    <meta name="keywords" content="autism, learning, language, communication, children, therapy, education, app" />
+    
+    <!-- Open Graph tags for social sharing -->
+    <meta property="og:title" content="EchoPath - Learning Language Through Play" />
+    <meta property="og:description" content="An immersive learning companion that helps children with autism build communication skills alongside their favorite virtual pet." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="%PUBLIC_URL%/logo512.png" />
+    
+    <!-- Apple touch icons for better iOS integration -->
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
+    <link rel="apple-touch-icon" sizes="152x152" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="%PUBLIC_URL%/logo192.png" />
+    
+    <!-- Microsoft tiles -->
+    <meta name="msapplication-square150x150logo" content="%PUBLIC_URL%/logo192.png" />
+    <meta name="msapplication-square310x310logo" content="%PUBLIC_URL%/logo512.png" />
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Disable automatic phone number detection -->
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- Prevent iOS Safari from adjusting text size -->
+    <meta name="apple-mobile-web-app-title" content="EchoPath">
+    
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
+    <title>EchoPath - Learning Language Through Play</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
   </body>
 </html>

@@ -1,14 +1,76 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Tailwind CSS directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+  Custom CSS Layer - Your existing styles take precedence
+  This ensures your beautiful custom design isn't overridden
+*/
+@layer components {
+  /* Your existing styles can be preserved here if needed */
 }
 
+/* Global styles - Minimal to prevent conflicts with App.css */
+/* Base reset - let App.css handle the main styling */
+* {
+  box-sizing: border-box;
+}
+
+/* Remove default margins and padding from all elements */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure consistent font rendering across platforms */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Let App.css handle the rest */
+}
+
+/* Code elements - keep original styling */
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
+/* Ensure images are responsive by default */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Better button defaults */
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Improve focus visibility */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Remove default list styling */
+ul, ol {
+  list-style: none;
+}
+
+/* Better link defaults */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Ensure consistent input styling */
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
