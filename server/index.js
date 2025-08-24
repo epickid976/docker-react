@@ -1,4 +1,4 @@
-// server/index.js
+// server/index.tsx
 
 const express = require('express');
 const app = express();
