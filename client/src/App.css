@@ -804,7 +804,7 @@ padding: calc(var(--nav-height) + 40px) 0 80px;
   will-change: transform;
 }
 
-/* Fallback for browsers without backdrop-filter support */
+/* Fallback for browsers without backdrop-filter support  */
 .no-backdrop-filter .feature {
   background: rgba(255, 255, 255, 0.15);
 }
