@@ -13,7 +13,8 @@ import { createPortal } from "react-dom";
 import "./App.css";
 
 /* ----------------------- types ----------------------- */
-type SectionId = "home" | "about" | "testimonials" | "contact";
+// "testimonials" |
+type SectionId = "home" | "about" |  "contact";
 
 type NavigationProps = {
   activeSection: SectionId;
@@ -108,7 +109,7 @@ const Navigation = ({ activeSection, onNavigate, onMeasured }: NavigationProps) 
       () => [
         { id: "home", label: "Home" },
         { id: "about", label: "About" },
-        { id: "testimonials", label: "Reviews" },
+        // { id: "testimonials", label: "Reviews" },
         { id: "contact", label: "Contact" },
       ],
       []
@@ -150,9 +151,9 @@ const Navigation = ({ activeSection, onNavigate, onMeasured }: NavigationProps) 
                 onClick={() => handleNavClick("home")}
                 aria-label="Go to home"
             >
-              <span className="text-2xl">🐾</span>
+              <span className="text-2xl">✅</span>
               <span className="font-bold tracking-tight text-slate-900 dark:text-slate-100">
-              EchoPath
+              VoilàVote
             </span>
             </button>
 
@@ -231,7 +232,7 @@ const Navigation = ({ activeSection, onNavigate, onMeasured }: NavigationProps) 
                 {[
                   { id: "home", label: "Home" },
                   { id: "about", label: "About" },
-                  { id: "testimonials", label: "Reviews" },
+                  // { id: "testimonials", label: "Reviews" },
                   { id: "contact", label: "Contact" },
                 ].map((item) => (
                     <button
@@ -300,41 +301,89 @@ const PlatformBadge = ({ icon, text, delay }: PlatformBadgeProps) => (
 
 /* -------------------- hooks --------------------- */
 
-const useScrollSpy = (sectionIds: SectionId[]) => {
-  const [activeSection, setActiveSection] = useState<SectionId>("home");
+// replace useScrollSpy with this
+const useActiveSectionObserver = (sectionIds: SectionId[]) => {
+  const [active, setActive] = useState<SectionId>("home");
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 120; // bias below the header
-      for (const sectionId of sectionIds) {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          const { top, height } = el.getBoundingClientRect();
-          const offsetTop = top + window.scrollY;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + height) {
-            setActiveSection(sectionId);
-            break;
+    const getNavHeight = () => {
+      const raw = getComputedStyle(document.documentElement)
+        .getPropertyValue("--nav-height")
+        .trim();
+      const n = parseFloat(raw || "64");
+      return Number.isFinite(n) ? n : 64;
+    };
+
+    const navH = getNavHeight();
+
+    // Negative top rootMargin shifts the observer down by the header height,
+    // so a section is “active” when its content is visible below the navbar.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Pick the entry with the largest intersection ratio
+        const visible = entries
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (visible?.target?.id && sectionIds.includes(visible.target.id as SectionId)) {
+          setActive(visible.target.id as SectionId);
+        } else {
+          // Edge cases: above first or below last — clamp to nearest
+          const tops = sectionIds
+            .map(id => {
+              const el = document.getElementById(id);
+              return { id, top: el ? el.getBoundingClientRect().top : Number.POSITIVE_INFINITY };
+            })
+            .filter(x => x.top !== Number.POSITIVE_INFINITY)
+            .sort((a, b) => a.top - b.top);
+
+          if (tops.length) {
+            if (tops[0].top > 0) setActive(tops[0].id);                             // above first
+            else if (tops[tops.length - 1].top < -window.innerHeight / 2)           // scrolled past last
+              setActive(tops[tops.length - 1].id);
           }
         }
+      },
+      {
+        root: null,
+        rootMargin: `-${navH + 8}px 0px 0px 0px`,  // account for fixed header + tiny bias
+        threshold: [0.25, 0.5, 0.75],              // stable across layouts/animations
       }
+    );
+
+    // Observe all sections
+    const els = sectionIds
+      .map(id => document.getElementById(id))
+      .filter((el): el is HTMLElement => !!el);
+
+    els.forEach(el => observer.observe(el));
+
+    // Also re-run when the nav height changes (e.g., responsive)
+    const onResize = () => {
+      observer.disconnect();
+      // Let the effect re-run on next tick by forcing a micro change
+      requestAnimationFrame(() => {
+        const ev = new Event("force-reinit");
+        window.dispatchEvent(ev);
+      });
     };
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleScroll);
+    window.addEventListener("resize", onResize);
+
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
+      window.removeEventListener("resize", onResize);
+      observer.disconnect();
     };
   }, [sectionIds]);
 
-  return activeSection;
+  return active;
 };
 
 /* ------------------------- Page ------------------------ */
 
 export default function App() {
-  const sectionIds: SectionId[] = ["home", "about", "testimonials", "contact"];
-  const activeSection = useScrollSpy(sectionIds);
+  // , "testimonials"
+  const sectionIds: SectionId[] = ["home", "about", "contact"];
+const activeSection = useActiveSectionObserver(sectionIds);
 
   const handleNavigate = useCallback((sectionId: SectionId) => {
     const el = document.getElementById(sectionId);
@@ -346,6 +395,8 @@ export default function App() {
   useLayoutEffect(() => {
     document.documentElement.style.setProperty('--nav-height', `${navHeight}px`);
   }, [navHeight]);
+
+  const navigate = useNavigate();
 
   return (
       <div className="min-h-dvh">
@@ -370,21 +421,20 @@ export default function App() {
             <div className="main-content">
               <FloatingElement delay={0.5}>
                 <div className="logo-section">
-                  <div className="logo">🐾</div>
-                  <h1 className="title">EchoPath</h1>
+                  <div className="logo text-center">✅</div>
+                  <h1 className="title text-center">VoilàVote</h1>
                 </div>
               </FloatingElement>
 
               <FloatingElement delay={1}>
-                <p className="tagline">
-                  Learning language through <span className="highlight">play & friendship</span>
+                <p className="tagline text-center">
+                  Voting and collaboration has never been <span className="highlight">easier</span>
                 </p>
               </FloatingElement>
 
               <FloatingElement delay={1.2}>
-                <p className="description">
-                  An immersive learning companion that helps children with autism build communication skills
-                  alongside their favorite virtual pet.
+                <p className="description text-center">
+                  An easy voting platform that makes it easy for anyone to organize polls and surveys. Whether you’re running an election or gathering feedback, VoilàVote simplifies the process and ensures everyone’s voice is heard.
                 </p>
               </FloatingElement>
 
@@ -392,15 +442,15 @@ export default function App() {
                 <div className="features">
                   <div className="feature">
                     <div className="feature-icon">🎯</div>
-                    <span>Personalized Lessons</span>
+                    <span>Nail the topic!</span>
                   </div>
                   <div className="feature">
                     <div className="feature-icon">📊</div>
-                    <span>Progress Tracking</span>
+                    <span>Personalize opinions</span>
                   </div>
                   <div className="feature">
                     <div className="feature-icon">🎮</div>
-                    <span>Interactive Learning</span>
+                    <span>Gamify it!</span>
                   </div>
                 </div>
               </FloatingElement>
@@ -409,10 +459,10 @@ export default function App() {
                 <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
                   <button
                       className="cta-button"
-                      onClick={() => alert("🚀 Coming soon to Vision Pro, iOS, and Web!")}
+                      onClick={() => navigate("/auth")}
                       aria-label="Begin the Journey with EchoPath"
                   >
-                    <span className="button-text">Begin the Journey</span>
+                    <span className="button-text">Start First Poll</span>
                     <span className="button-icon">✨</span>
                   </button>
                 </div>
@@ -420,9 +470,9 @@ export default function App() {
 
               <FloatingElement delay={2.5}>
                 <div className="platform-badges">
-                  <PlatformBadge icon="🥽" text=" Vision Pro" />
-                  <PlatformBadge icon="📱" text=" iOS" />
-                  <PlatformBadge icon="🌐" text=" Web App" />
+                  <PlatformBadge icon="💻" text="Desktop (Coming Soon)" />
+                  <PlatformBadge icon="📱" text=" Mobile" />
+                  <PlatformBadge icon="🌐" text=" Web" />
                 </div>
               </FloatingElement>
             </div>
@@ -432,78 +482,78 @@ export default function App() {
           <section
               id="about"
               className="section content-section"
-              style={{ scrollMarginTop: "calc(var(--nav-h, 64px) + 16px)" }}
+              style={{scrollMarginTop: "calc(var(--nav-height, 64px) + 16px)"}}
           >
             <div className="section-content">
               <FloatingElement delay={0.3}>
-                <h2>About EchoPath</h2>
+                <h2>About VoilàVote</h2>
               </FloatingElement>
               <FloatingElement delay={0.6}>
                 <p>
-                  EchoPath combines cutting-edge AI technology with evidence-based therapeutic approaches to
-                  create personalized learning experiences for children with autism. Our virtual companion adapts
-                  to each child's unique communication style and learning pace.
+                  VoilàVote delivers instant, interactive polls with real-time results, blending sleek design with
+                  powerful backend technology. Share a link, collect responses effortlessly, and watch live updates as
+                  every vote shapes the outcome.
                 </p>
               </FloatingElement>
               <FloatingElement delay={0.9}>
                 <div className="about-features">
                   <div className="about-feature">
-                    <div className="about-icon">🧠</div>
-                    <h3>AI-Powered</h3>
-                    <p>Adapts to each child</p>
+                    <div className="about-icon">⚡️</div>
+                    <h3>Real-Time Results</h3>
+                    <p>Every vote instantly updates the results</p>
                   </div>
                   <div className="about-feature">
-                    <div className="about-icon">👩‍⚕️</div>
-                    <h3>Therapist Approved</h3>
-                    <p>Built with SLPs</p>
+                    <div className="about-icon">️🔗</div>
+                    <h3>Simple Sharing</h3>
+                    <p>Create a poll and share a short link with anyone; no signup required for participants.</p>
                   </div>
                   <div className="about-feature">
                     <div className="about-icon">📱</div>
                     <h3>Cross-Platform</h3>
-                    <p>iOS, Vision Pro & Web</p>
+                    <p>Desktop, Mobile & Web</p>
                   </div>
                 </div>
               </FloatingElement>
             </div>
           </section>
 
-          {/* Testimonials */}
-          <section
-              id="testimonials"
-              className="section content-section"
-              style={{ scrollMarginTop: "calc(var(--nav-h, 64px) + 16px)" }}
-          >
-            <div className="section-content">
-              <FloatingElement delay={0.3}>
-                <h2>What Parents Say</h2>
-              </FloatingElement>
-              <FloatingElement delay={0.6}>
-                <p>Families trust EchoPath to support their child's communication journey.</p>
-              </FloatingElement>
-              <FloatingElement delay={0.9}>
-                <div className="testimonials-preview">
-                  <div className="testimonial">
-                    <p>"EchoPath has been a game-changer for us."</p>
-                    <span>- Sarah, Parent</span>
-                  </div>
-                  <div className="testimonial">
-                    <p>"I can finally see progress clearly."</p>
-                    <span>- Dr. Martinez, SLP</span>
-                  </div>
-                  <div className="testimonial">
-                    <p>"Learning feels like play!"</p>
-                    <span>- Mike, Father of two</span>
-                  </div>
-                </div>
-              </FloatingElement>
-            </div>
-          </section>
+          {/*/!* Testimonials *!/*/}
+          {/*<section*/}
+          {/*    id="testimonials"*/}
+          {/*    className="section content-section"*/}
+          {/*    style={{ scrollMarginTop: "calc(var(--nav-h, 64px) + 16px)" }}*/}
+          {/*>*/}
+          {/*  <div className="section-content">*/}
+          {/*    <FloatingElement delay={0.3}>*/}
+          {/*      <h2>What Parents Say</h2>*/}
+          {/*    </FloatingElement>*/}
+          {/*    <FloatingElement delay={0.6}>*/}
+          {/*      <p>Families trust EchoPath to support their child's communication journey.</p>*/}
+          {/*    </FloatingElement>*/}
+          {/*    <FloatingElement delay={0.9}>*/}
+          {/*      <div className="testimonials-preview">*/}
+          {/*        <div className="testimonial">*/}
+          {/*          <p>"EchoPath has been a game-changer for us."</p>*/}
+          {/*          <span>- Sarah, Parent</span>*/}
+          {/*        </div>*/}
+          {/*        <div className="testimonial">*/}
+          {/*          <p>"I can finally see progress clearly."</p>*/}
+          {/*          <span>- Dr. Martinez, SLP</span>*/}
+          {/*        </div>*/}
+          {/*        <div className="testimonial">*/}
+          {/*          <p>"Learning feels like play!"</p>*/}
+          {/*          <span>- Mike, Father of two</span>*/}
+          {/*        </div>*/}
+          {/*      </div>*/}
+          {/*    </FloatingElement>*/}
+          {/*  </div>*/}
+          {/*</section>*/}
 
           {/* Contact */}
           <section
               id="contact"
               className="section content-section"
-              style={{ scrollMarginTop: "calc(var(--nav-h, 64px) + 16px)" }}
+              style={{scrollMarginTop: "calc(var(--nav-height, 64px) + 16px)"}}
           >
             <div className="section-content">
               <FloatingElement delay={0.3}>
@@ -533,8 +583,8 @@ export default function App() {
 
           <footer className="footer pb-[calc(env(safe-area-inset-bottom)+24px)]">
             <FloatingElement delay={0.3}>
-              <div className="footer-note">
-                <span>Built for therapists, daycares, and families</span>
+            <div className="footer-note">
+                <span>Built for people who want results</span>
               </div>
             </FloatingElement>
           </footer>
