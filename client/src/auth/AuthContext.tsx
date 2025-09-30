@@ -5,30 +5,34 @@ import { supabase } from "../supabaseClient"
 
 type AuthContextType = {
     user: any | null;
-    role: "SYSTEM_ADMIN" | "INSTITUTION_ADMIN" | "TEACHER" | "PARENT" | null;
+    profile: any | null;
     loading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType>({
     user: null,
-    role: null,
+    profile: null,
     loading: true,
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<any | null>(null);
-    const [role, setRole] = useState<AuthContextType["role"]>(null);
+    const [profile, setProfile] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        console.log('AuthContext: Initializing auth...');
+        
         // 1. Load current session
         const session = supabase.auth.getSession();
-        session.then(({ data }) => {
+        session.then(({ data, error }) => {
+            console.log('AuthContext: Session loaded:', { data, error });
             setUser(data.session?.user ?? null);
         });
 
         // 2. Listen for login/logout
-        const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+            console.log('AuthContext: Auth state changed:', { event, session });
             setUser(session?.user ?? null);
         });
 
@@ -36,24 +40,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     useEffect(() => {
-        const loadUserRole = async () => {
+        const loadUserProfile = async () => {
+            console.log('AuthContext: Loading profile for user:', user);
+            
             if (!user) {
-                setRole(null);
+                console.log('AuthContext: No user, setting loading to false');
+                setProfile(null);
                 setLoading(false);
                 return;
             }
 
-            // TODO: Update this logic for GoutDeau user roles
-            // For now, set a default role for authenticated users
-            setRole("PARENT"); // Default role for water tracking app
-            setLoading(false);
+            try {
+                // Load user profile from the profiles table
+                const { data: profileData, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .single();
+
+                console.log('AuthContext: Profile loaded:', { profileData, error });
+
+                if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+                    console.error('Error loading profile:', error);
+                }
+
+                setProfile(profileData);
+            } catch (err) {
+                console.error('AuthContext: Error in loadUserProfile:', err);
+            } finally {
+                setLoading(false);
+            }
         };
 
-        loadUserRole();
+        loadUserProfile();
     }, [user]);
 
     return (
-        <AuthContext.Provider value={{ user, role, loading }}>
+        <AuthContext.Provider value={{ user, profile, loading }}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "./AuthContext";
-import { routeByRole } from "./routeByRole";
+// Remove routeByRole import since we're not using roles anymore
 import { useNavigate, useLocation } from "react-router-dom";
 
-type ViewMode = "login" | "signup" | "check-email" | "unconfirmed" | "confirmed";
+type ViewMode = "login" | "signup" | "check-email" | "unconfirmed" | "confirmed" | "forgot-password" | "reset-password";
 
 export default function AuthPage() {
   const [mode, setMode] = useState<ViewMode>("login");
@@ -15,16 +15,29 @@ export default function AuthPage() {
   const [info, setInfo] = useState<string | null>(null);
   const [lastAction, setLastAction] = useState<"signup" | "login" | null>(null);
 
-  const { user, role, loading } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // If already authed, route by role
+  // Test Supabase connection on component mount
+  useEffect(() => {
+    const testConnection = async () => {
+      try {
+        const { data, error } = await supabase.from('profiles').select('count').limit(1);
+        console.log('Supabase connection test:', { data, error });
+      } catch (err) {
+        console.error('Supabase connection failed:', err);
+      }
+    };
+    testConnection();
+  }, []);
+
+  // If already authed, redirect to dashboard
   useEffect(() => {
     if (!loading && user) {
-      navigate(routeByRole(role ?? null), { replace: true });
+      navigate("/dashboard", { replace: true });
     }
-  }, [user, role, loading, navigate]);
+  }, [user, loading, navigate]);
 
   // If redirected back after clicking confirmation link, show a nice banner.
   // (Configure Supabase Email Redirect URL to this page.)
@@ -39,10 +52,19 @@ export default function AuthPage() {
       search.get("type") === "signup" ||
       signups.some((k) => search.has(k) || hash.has(k));
 
+    const looksPasswordReset = search.get("from") === "password-reset" ||
+      search.get("type") === "recovery";
+
     if (looksConfirmed) {
       setMode("confirmed");
       setInfo("Your email address has been confirmed. You can log in now.");
       // Clear any stale errors
+      setError(null);
+      // Optional: clean URL (no params)
+      window.history.replaceState({}, "", location.pathname);
+    } else if (looksPasswordReset) {
+      setMode("reset-password");
+      setInfo("You can now set a new password for your account.");
       setError(null);
       // Optional: clean URL (no params)
       window.history.replaceState({}, "", location.pathname);
@@ -77,25 +99,45 @@ export default function AuthPage() {
     setError(null);
     setInfo(null);
 
+    console.log('AuthPage: Submitting form, mode:', mode);
+
     try {
       if (mode === "login" || mode === "confirmed") {
+        console.log('AuthPage: Attempting login...');
         setLastAction("login");
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        console.log('AuthPage: Login result:', { data, error });
+        
         if (error) {
           // Heuristic for unconfirmed-email flow
           const msg = (error.message || "").toLowerCase();
           if (msg.includes("confirm") || msg.includes("verified") || msg.includes("validate")) {
-            showUnconfirmed("Looks like your email hasn’t been confirmed yet.");
+            showUnconfirmed("Looks like your email hasn't been confirmed yet.");
           } else {
             setError(error.message ?? "Login failed.");
           }
           return;
         }
+        console.log('AuthPage: Login successful, user:', data.user);
         // Success will be handled by useAuth redirect above.
+      } else if (mode === "reset-password") {
+        console.log('AuthPage: Updating password...');
+        const { error } = await supabase.auth.updateUser({ password });
+        console.log('AuthPage: Password update result:', { error });
+        
+        if (error) {
+          setError(error.message ?? "Could not update password.");
+          return;
+        }
+        
+        setInfo("Password updated successfully! You can now log in with your new password.");
+        setMode("login");
+        setPassword("");
       } else {
+        console.log('AuthPage: Attempting signup...');
         // SIGN UP
         setLastAction("signup");
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -103,13 +145,25 @@ export default function AuthPage() {
             emailRedirectTo: window.location.origin + "/auth?from=email",
           },
         });
+        console.log('AuthPage: Signup result:', { data, error });
+        
         if (error) {
           setError(error.message ?? "Could not create account.");
           return;
         }
-        showCheckEmail("Almost there! Check your inbox to confirm your email.");
+        
+        if (data.user && !data.session) {
+          // User created but needs email confirmation
+          console.log('AuthPage: User created, email confirmation required');
+          showCheckEmail("Almost there! Check your inbox to confirm your email.");
+        } else if (data.user && data.session) {
+          // User created and immediately signed in (email confirmation disabled)
+          console.log('AuthPage: User created and signed in immediately');
+          // The auth state change will handle the redirect
+        }
       }
     } catch (err: any) {
+      console.error('AuthPage: Error in onSubmit:', err);
       setError(err?.message ?? "Something went wrong.");
     } finally {
       setSubmitting(false);
@@ -151,6 +205,26 @@ export default function AuthPage() {
       setInfo("Confirmation email resent. Check your inbox.");
     } catch (err: any) {
       setError(err?.message ?? "Could not resend confirmation.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function onForgotPassword() {
+    if (!email || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    setInfo(null);
+    try {
+      console.log('AuthPage: Sending password reset email...');
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/auth?from=password-reset",
+      });
+      if (error) throw error;
+      setInfo("Password reset email sent! Check your inbox and click the link to reset your password.");
+    } catch (err: any) {
+      console.error('AuthPage: Error sending password reset:', err);
+      setError(err?.message ?? "Could not send password reset email.");
     } finally {
       setSubmitting(false);
     }
@@ -204,7 +278,7 @@ export default function AuthPage() {
         <section className="w-full">
           <div className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 shadow-sm mx-auto">
             {/* Tabs (hide in special modes) */}
-            {["login", "signup", "confirmed"].includes(mode) && (
+            {["login", "signup", "confirmed", "forgot-password"].includes(mode) && (
               <div className="flex gap-2 mb-4">
                 <button
                   type="button"
@@ -248,26 +322,28 @@ export default function AuthPage() {
             )}
 
             {/* Main views */}
-            {(mode === "login" || mode === "signup" || mode === "confirmed") && (
+            {(mode === "login" || mode === "signup" || mode === "confirmed" || mode === "reset-password") && (
               <form onSubmit={onSubmit} className="grid gap-3">
-                <label className="grid gap-1 text-sm text-slate-700 dark:text-slate-200">
-                  Email
-                  <input
-                    className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-3 text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
-                    type="email"
-                    autoComplete="email"
-                    inputMode="email"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </label>
+                {mode !== "reset-password" && (
+                  <label className="grid gap-1 text-sm text-slate-700 dark:text-slate-200">
+                    Email
+                    <input
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-3 text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+                      type="email"
+                      autoComplete="email"
+                      inputMode="email"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </label>
+                )}
 
                 <label className="grid gap-1 text-sm text-slate-700 dark:text-slate-200">
-                  Password
+                  {mode === "reset-password" ? "New Password" : "Password"}
                   <input
                     className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-3 text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
                     type="password"
@@ -282,26 +358,37 @@ export default function AuthPage() {
 
                 <button
                   type="submit"
-                  disabled={!email || password.length < 6 || submitting}
+                  disabled={(mode !== "reset-password" && !email) || password.length < 6 || submitting}
                   className="mt-1 inline-flex items-center justify-center rounded-lg bg-slate-900 text-white px-4 py-3 font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {submitting
                     ? "Please wait…"
                     : mode === "login" || mode === "confirmed"
                     ? "Login"
+                    : mode === "reset-password"
+                    ? "Update password"
                     : "Create account"}
                 </button>
 
                 {(mode === "login" || mode === "confirmed") && (
-                  <button
-                    type="button"
-                    onClick={onMagicLink}
-                    disabled={!email || submitting}
-                    className="text-blue-600 dark:text-blue-400 text-sm justify-self-start disabled:opacity-60"
-                    title="Send a one-time magic link to your email"
-                  >
-                    Or use magic link
-                  </button>
+                  <div className="flex justify-between items-center">
+                    <button
+                      type="button"
+                      onClick={onMagicLink}
+                      disabled={!email || submitting}
+                      className="text-blue-600 dark:text-blue-400 text-sm disabled:opacity-60"
+                      title="Send a one-time magic link to your email"
+                    >
+                      Or use magic link
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMode("forgot-password")}
+                      className="text-blue-600 dark:text-blue-400 text-sm hover:underline"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
                 )}
               </form>
             )}
@@ -351,6 +438,50 @@ export default function AuthPage() {
               </div>
             )}
 
+            {mode === "forgot-password" && (
+              <div className="grid gap-4">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                  Reset your password
+                </h2>
+                <p className="text-sm text-slate-600 dark:text-slate-300">
+                  Enter your email address and we'll send you a link to reset your password.
+                </p>
+                <form onSubmit={(e) => { e.preventDefault(); onForgotPassword(); }} className="grid gap-3">
+                  <label className="grid gap-1 text-sm text-slate-700 dark:text-slate-200">
+                    Email
+                    <input
+                      className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-3 text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
+                      type="email"
+                      autoComplete="email"
+                      inputMode="email"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </label>
+                  <button
+                    type="submit"
+                    disabled={!email || submitting}
+                    className="mt-1 inline-flex items-center justify-center rounded-lg bg-slate-900 text-white px-4 py-3 font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {submitting ? "Sending..." : "Send reset link"}
+                  </button>
+                </form>
+                <div className="text-center">
+                  <button
+                    onClick={() => setMode("login")}
+                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    Back to login
+                  </button>
+                </div>
+              </div>
+            )}
+
+
             {mode === "unconfirmed" && (
               <div className="grid gap-4">
                 <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
@@ -358,7 +489,7 @@ export default function AuthPage() {
                 </h2>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
                   Your account exists, but the email <span className="font-medium">{email}</span>{" "}
-                  hasn’t been confirmed yet. Please click the confirmation link we sent. You can
+                  hasn't been confirmed yet. Please click the confirmation link we sent. You can
                   resend it below.
                 </p>
                 <div className="flex items-center gap-2">

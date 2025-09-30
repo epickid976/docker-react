@@ -8,16 +8,13 @@ import Landing from "./App";
 import {JSX} from "react"; // 👈 your marketing/landing page
 
 function Protected({
-  allow,
   children,
 }: {
-  allow: (role: string | null) => boolean;
   children: JSX.Element;
 }) {
-  const { user, role, loading } = useAuth();
+  const { user, loading } = useAuth();
   if (loading) return <div>Loading…</div>;
-  if (!user) return <Navigate to="/auth" replace />;          // only for protected routes
-  if (!allow(role ?? null)) return <Navigate to="/auth" replace />;
+  if (!user) return <Navigate to="/auth" replace />;
   return children;
 }
 
@@ -33,7 +30,7 @@ export default function AppRouter() {
         <Route
           path="/admin"
           element={
-            <Protected allow={(r) => r === "SYSTEM_ADMIN"}>
+            <Protected>
               <AdminPage />
             </Protected>
           }
@@ -41,7 +38,7 @@ export default function AppRouter() {
         <Route
           path="/dashboard"
           element={
-            <Protected allow={(r) => r === "INSTITUTION_ADMIN" || r === "TEACHER"}>
+            <Protected>
               <DashboardPage />
             </Protected>
           }
@@ -49,7 +46,7 @@ export default function AppRouter() {
         <Route
           path="/parent"
           element={
-            <Protected allow={(r) => r === "PARENT"}>
+            <Protected>
               <ParentPage />
             </Protected>
           }
