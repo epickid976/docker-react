@@ -6,21 +6,18 @@ import { supabase } from "../supabaseClient"
 type AuthContextType = {
     user: any | null;
     role: "SYSTEM_ADMIN" | "INSTITUTION_ADMIN" | "TEACHER" | "PARENT" | null;
-    tenantId: string | null;
     loading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType>({
     user: null,
     role: null,
-    tenantId: null,
     loading: true,
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<any | null>(null);
     const [role, setRole] = useState<AuthContextType["role"]>(null);
-    const [tenantId, setTenantId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -39,42 +36,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     useEffect(() => {
-        const loadMembership = async () => {
+        const loadUserRole = async () => {
             if (!user) {
                 setRole(null);
-                setTenantId(null);
                 setLoading(false);
                 return;
             }
 
-            // Fetch membership for this user
-            const { data: memberships} = await supabase
-                .from("membership")
-                .select("role, tenant_id")
-                .eq("user_id", user.id)
-
-            if (memberships && memberships.length > 0) {
-                setRole(memberships[0].role);
-                setTenantId(memberships[0].tenant_id);
-            } else {
-                // maybe a system_admin?
-                const { data: sys } = await supabase
-                    .from("system_admin")
-                    .select("user_id")
-                    .eq("user_id", user.id)
-
-                if (sys && sys.length > 0 ) {
-                    setRole("SYSTEM_ADMIN");
-                }
-            }
+            // TODO: Update this logic for GoutDeau user roles
+            // For now, set a default role for authenticated users
+            setRole("PARENT"); // Default role for water tracking app
             setLoading(false);
         };
 
-        loadMembership();
+        loadUserRole();
     }, [user]);
 
     return (
-        <AuthContext.Provider value={{ user, role, tenantId, loading }}>
+        <AuthContext.Provider value={{ user, role, loading }}>
             {children}
         </AuthContext.Provider>
     );

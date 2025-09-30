@@ -159,12 +159,12 @@ export default function AuthPage() {
   const brand = (
     <header className="sticky top-0 z-10 bg-white/80 dark:bg-slate-950/80 backdrop-blur border-b border-slate-200/60 dark:border-slate-800/60 pt-[env(safe-area-inset-top)]">
       <div className="mx-auto max-w-7xl px-4 py-3 flex items-center gap-2">
-        <div className="text-2xl">🐾</div>
+        <div className="text-2xl">💧</div>
         <div className="font-bold tracking-tight text-slate-900 dark:text-slate-100 text-lg">
-          EchoPath
+          GoutDeau
         </div>
         <div className="ml-auto hidden md:block text-sm text-slate-500 dark:text-slate-400">
-          Learning language through play &amp; friendship
+          Track your water, earn achievements
         </div>
       </div>
     </header>
@@ -179,22 +179,22 @@ export default function AuthPage() {
         <section className="hidden md:block">
           <div className="max-w-md">
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-3">
-              Welcome to <span className="text-blue-600">EchoPath</span>
+              Welcome to <span className="text-blue-600">GoutDeau</span>
             </h1>
             <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-              An immersive learning companion that helps children with autism build communication
-              skills—alongside their favorite virtual pet.
+              A water tracking app that gamifies health and hydration. Track your daily water intake,
+              earn achievements, and build healthy habits with your personal water companion.
             </p>
 
             <ul className="mt-6 grid gap-3 text-slate-700 dark:text-slate-200">
               <li className="flex items-center gap-2">
-                <span>🎯</span> Personalized lessons
+                <span>🎯</span> Hit your hydration goals
               </li>
               <li className="flex items-center gap-2">
-                <span>📊</span> Progress tracking
+                <span>📊</span> Track your progress
               </li>
               <li className="flex items-center gap-2">
-                <span>🎮</span> Interactive learning
+                <span>🎮</span> Earn achievements
               </li>
             </ul>
           </div>
@@ -383,7 +383,7 @@ export default function AuthPage() {
       </main>
 
       <footer className="py-4 text-center text-xs text-slate-500 dark:text-slate-400">
-        Built for therapists, daycares, and families
+        Built for health-conscious individuals and families
       </footer>
     </div>
   );

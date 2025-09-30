@@ -1,78 +1,33 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../supabaseClient";
 import { useAuth } from "../auth/AuthContext";
 
-type Student = { id: string; display_name: string };
-type Lesson = { id: string; title: string; status: "draft" | "published" };
-
 export default function DashboardPage() {
-  const { user, tenantId } = useAuth();
-  const [students, setStudents] = useState<Student[]>([]);
-  const [lessons, setLessons] = useState<Lesson[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!tenantId) return;
-    (async () => {
-      setLoading(true);
-      const [{ data: s }, { data: l }] = await Promise.all([
-        supabase.from("student").select("id, display_name").eq("tenant_id", tenantId),
-        supabase.from("lesson").select("id, title, status").eq("tenant_id", tenantId),
-      ]);
-      setStudents(s || []);
-      setLessons(l || []);
-      setLoading(false);
-    })();
-  }, [tenantId]);
+  const { user } = useAuth();
 
   return (
     <div style={{ padding: 24 }}>
-      <h1>Teacher/Admin Dashboard</h1>
-      <p style={{ opacity: 0.7 }}>Signed in as {user?.email}</p>
+      <h1>💧 GoutDeau Dashboard</h1>
+      <p style={{ opacity: 0.7 }}>Welcome back, {user?.email}</p>
 
-      {loading && <p>Loading…</p>}
-
-      {!loading && (
-        <>
-          <section style={{ marginTop: 24 }}>
-            <h2>Students</h2>
-            {students.length === 0 ? (
-              <p>No students yet.</p>
-            ) : (
-              <ul>
-                {students.map((s) => (
-                  <li key={s.id}>{s.display_name}</li>
-                ))}
-              </ul>
-            )}
-          </section>
-
-          <section style={{ marginTop: 24 }}>
-            <h2>Lessons</h2>
-            {lessons.length === 0 ? (
-              <p>No lessons yet.</p>
-            ) : (
-              <ul>
-                {lessons.map((l) => (
-                  <li key={l.id}>
-                    {l.title} <em style={{ opacity: 0.6 }}>({l.status})</em>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
-          <section style={{ marginTop: 24 }}>
-            <h2>Quick Actions</h2>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <button onClick={() => alert("TODO: Create Student modal")}>+ Student</button>
-              <button onClick={() => alert("TODO: Create Lesson flow")}>+ Lesson (draft)</button>
-              <button onClick={() => alert("TODO: Assign Next Lesson UI")}>Assign Next Lesson</button>
-              <button onClick={() => alert("TODO: Generate Code")}>Generate Device Code</button>
-            </div>
-          </section>
-        </>
-      )}
+      <div style={{ marginTop: 24, padding: 24, border: "1px solid #e5e7eb", borderRadius: 8 }}>
+        <h2>🚧 Water Tracking Dashboard Coming Soon</h2>
+        <p>Your personalized water tracking dashboard is being built!</p>
+        <p>Features will include:</p>
+        <ul>
+          <li>Daily water intake tracking</li>
+          <li>Hydration goals and progress</li>
+          <li>Achievements and streaks</li>
+          <li>Weekly and monthly analytics</li>
+          <li>Reminder settings</li>
+          <li>Social features and challenges</li>
+        </ul>
+        
+        <div style={{ marginTop: 16, padding: 16, backgroundColor: "#f0f9ff", borderRadius: 8, border: "1px solid #0ea5e9" }}>
+          <h3 style={{ margin: 0, color: "#0c4a6e" }}>💡 Stay Hydrated!</h3>
+          <p style={{ margin: "8px 0 0 0", color: "#0c4a6e" }}>
+            While we build your dashboard, remember to drink water regularly throughout the day!
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

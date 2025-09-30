@@ -151,9 +151,9 @@ const Navigation = ({ activeSection, onNavigate, onMeasured }: NavigationProps) 
                 onClick={() => handleNavClick("home")}
                 aria-label="Go to home"
             >
-              <span className="text-2xl">✅</span>
+              <span className="text-2xl">💧</span>
               <span className="font-bold tracking-tight text-slate-900 dark:text-slate-100">
-              VoilàVote
+              GoutDeau
             </span>
             </button>
 
@@ -421,20 +421,20 @@ const activeSection = useActiveSectionObserver(sectionIds);
             <div className="main-content">
               <FloatingElement delay={0.5}>
                 <div className="logo-section">
-                  <div className="logo text-center">✅</div>
-                  <h1 className="title text-center">VoilàVote</h1>
+                  <div className="logo text-center">💧</div>
+                  <h1 className="title text-center">GoutDeau</h1>
                 </div>
               </FloatingElement>
 
               <FloatingElement delay={1}>
                 <p className="tagline text-center">
-                  Voting and collaboration has never been <span className="highlight">easier</span>
+                  Hydration tracking has never been <span className="highlight">more fun</span>
                 </p>
               </FloatingElement>
 
               <FloatingElement delay={1.2}>
                 <p className="description text-center">
-                  An easy voting platform that makes it easy for anyone to organize polls and surveys. Whether you’re running an election or gathering feedback, VoilàVote simplifies the process and ensures everyone’s voice is heard.
+                  A water tracking app that gamifies health and the importance of drinking water. Track your daily hydration, earn achievements, and build healthy habits with GoutDeau - your personal water companion.
                 </p>
               </FloatingElement>
 
@@ -442,11 +442,11 @@ const activeSection = useActiveSectionObserver(sectionIds);
                 <div className="features">
                   <div className="feature">
                     <div className="feature-icon">🎯</div>
-                    <span>Nail the topic!</span>
+                    <span>Hit your goals!</span>
                   </div>
                   <div className="feature">
                     <div className="feature-icon">📊</div>
-                    <span>Personalize opinions</span>
+                    <span>Track your progress</span>
                   </div>
                   <div className="feature">
                     <div className="feature-icon">🎮</div>
@@ -462,7 +462,7 @@ const activeSection = useActiveSectionObserver(sectionIds);
                       onClick={() => navigate("/auth")}
                       aria-label="Begin the Journey with EchoPath"
                   >
-                    <span className="button-text">Start First Poll</span>
+                    <span className="button-text">Start Your Journey</span>
                     <span className="button-icon">✨</span>
                   </button>
                 </div>
@@ -486,31 +486,31 @@ const activeSection = useActiveSectionObserver(sectionIds);
           >
             <div className="section-content">
               <FloatingElement delay={0.3}>
-                <h2>About VoilàVote</h2>
+                <h2>About GoutDeau</h2>
               </FloatingElement>
               <FloatingElement delay={0.6}>
                 <p>
-                  VoilàVote delivers instant, interactive polls with real-time results, blending sleek design with
-                  powerful backend technology. Share a link, collect responses effortlessly, and watch live updates as
-                  every vote shapes the outcome.
+                  GoutDeau transforms water tracking into an engaging, gamified experience that motivates you to stay hydrated. 
+                  Track your daily water intake, unlock achievements, and build lasting healthy habits with our intuitive 
+                  and beautiful interface designed for both web and mobile platforms.
                 </p>
               </FloatingElement>
               <FloatingElement delay={0.9}>
                 <div className="about-features">
                   <div className="about-feature">
-                    <div className="about-icon">⚡️</div>
-                    <h3>Real-Time Results</h3>
-                    <p>Every vote instantly updates the results</p>
+                    <div className="about-icon">🏆</div>
+                    <h3>Gamified Tracking</h3>
+                    <p>Earn achievements and unlock rewards as you build healthy hydration habits</p>
                   </div>
                   <div className="about-feature">
-                    <div className="about-icon">️🔗</div>
-                    <h3>Simple Sharing</h3>
-                    <p>Create a poll and share a short link with anyone; no signup required for participants.</p>
+                    <div className="about-icon">📊</div>
+                    <h3>Smart Analytics</h3>
+                    <p>Track your progress with detailed insights and personalized recommendations</p>
                   </div>
                   <div className="about-feature">
                     <div className="about-icon">📱</div>
                     <h3>Cross-Platform</h3>
-                    <p>Desktop, Mobile & Web</p>
+                    <p>Available on Web, iOS & Android</p>
                   </div>
                 </div>
               </FloatingElement>
@@ -570,11 +570,11 @@ const activeSection = useActiveSectionObserver(sectionIds);
                   </div>
                   <div className="contact-item">
                     <div className="contact-icon">💬</div>
-                    <span>Schedule a demo call</span>
+                    <span>Schedule a demo call (Coming Soon)</span>
                   </div>
                   <div className="contact-item">
                     <div className="contact-icon">📚</div>
-                    <span>Access our resource library</span>
+                    <span>Access our resource library (Coming Soon)</span>
                   </div>
                 </div>
               </FloatingElement>

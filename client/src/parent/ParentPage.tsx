@@ -1,8 +1,21 @@
 export default function ParentPage() {
   return (
     <div style={{ padding: 24 }}>
-      <h1>This is the Parent page</h1>
-      <p>Read-only view of your child’s next lesson and progress will appear here.</p>
+      <h1>💧 GoutDeau Parent Dashboard</h1>
+      <p>Track your family's hydration habits and health goals.</p>
+      
+      <div style={{ marginTop: 24, padding: 24, border: "1px solid #e5e7eb", borderRadius: 8 }}>
+        <h2>🚧 Family Water Tracking Coming Soon</h2>
+        <p>This page will help you monitor your family's hydration habits.</p>
+        <p>Features will include:</p>
+        <ul>
+          <li>Family member water intake tracking</li>
+          <li>Progress monitoring and insights</li>
+          <li>Hydration goals and reminders</li>
+          <li>Family challenges and achievements</li>
+          <li>Health tips and recommendations</li>
+        </ul>
+      </div>
     </div>
   );
 }
