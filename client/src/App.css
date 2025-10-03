@@ -712,6 +712,14 @@ padding: calc(var(--nav-height) + 40px) 0 80px;
   transform: translateY(0) translateZ(0);
 }
 
+/* Ensure the logo container is centered */
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Enhanced typography */
 .logo {
   font-size: clamp(3rem, 10vw, 4rem);
