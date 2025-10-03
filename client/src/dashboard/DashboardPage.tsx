@@ -606,7 +606,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto px-4 py-6 pb-safe">
         {/* Progress Card */}
         <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 mb-6">
           <div className="flex items-center justify-between mb-4">

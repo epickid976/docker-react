@@ -47,7 +47,21 @@ body {
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
   padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
+  /* Use padding-bottom OR add to last child - we'll use utility class for more control */
+}
+
+/* iOS Safari bottom bar safe area - utility class */
+.pb-safe {
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+.mb-safe {
+  margin-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* For fixed/sticky bottom elements */
+.bottom-safe {
+  bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Code elements - keep original styling */

@@ -245,7 +245,7 @@ export default function AuthPage() {
   );
 
   return (
-    <div className="min-h-dvh bg-slate-50 dark:bg-slate-900 flex flex-col">
+    <div className="min-h-dvh bg-slate-50 dark:bg-slate-900 flex flex-col pb-safe">
       {brand}
 
       <main className="flex-1 grid md:grid-cols-2 items-center mx-auto max-w-7xl w-full px-4 gap-8 pb-[env(safe-area-inset-bottom)]">
