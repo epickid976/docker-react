@@ -521,16 +521,6 @@ export default function DashboardPage() {
               {/* Icon buttons grid on mobile (3x2 for 5 buttons), row on desktop */}
               <div className="grid grid-cols-3 sm:flex sm:items-center gap-2 sm:gap-2">
                 <motion.button
-                  onClick={() => setShowReminders(true)}
-                  className="p-3 sm:p-2 text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  title="Reminders"
-                >
-                  <Bell size={20} />
-                </motion.button>
-                
-                <motion.button
                   onClick={() => setShowAnalytics(true)}
                   className="p-3 sm:p-2 text-slate-400 hover:text-green-600 dark:hover:text-green-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
                   whileHover={{ scale: 1.05 }}
@@ -538,6 +528,26 @@ export default function DashboardPage() {
                   title="Analytics & Insights"
                 >
                   <BarChart3 size={20} />
+                </motion.button>
+                
+                <motion.button
+                  onClick={() => setShowRecommendations(true)}
+                  className="p-3 sm:p-2 text-slate-400 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Smart Recommendations"
+                >
+                  <Lightbulb size={20} />
+                </motion.button>
+                
+                <motion.button
+                  onClick={() => setShowReminders(true)}
+                  className="p-3 sm:p-2 text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Reminders"
+                >
+                  <Bell size={20} />
                 </motion.button>
                 
                 <motion.button
@@ -558,16 +568,6 @@ export default function DashboardPage() {
                   title="User Preferences"
                 >
                   <Settings size={20} />
-                </motion.button>
-                
-                <motion.button
-                  onClick={() => setShowRecommendations(true)}
-                  className="p-3 sm:p-2 text-slate-400 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  title="Smart Recommendations"
-                >
-                  <Lightbulb size={20} />
                 </motion.button>
               </div>
               
