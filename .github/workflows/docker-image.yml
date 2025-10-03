@@ -73,11 +73,11 @@ jobs:
             docker rmi epickid976/react-server:latest || true
 
             echo "📥 Pulling updated images"
-            docker pull epickid976/react-client:${{ github.sha }}
-            docker pull epickid976/react-server:${{ github.sha }}
+            docker pull epickid976/react-client:latest
+            docker pull epickid976/react-server:latest
 
             echo "🔄 Stopping current containers"
-            docker compose -f docker-compose.yml down
+            docker compose -f docker-compose.prod.yml down
 
             echo "🚀 Launching new containers"
-            docker compose -f docker-compose.yml up -d --force-recreate
+            docker compose -f docker-compose.prod.yml up -d --force-recreate
