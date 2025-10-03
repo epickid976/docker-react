@@ -8,4 +8,4 @@ RUN npm install
 COPY . .
 
 EXPOSE 5000
-CMD ["node", "index.tsx"]
+CMD ["node", "index.js"]

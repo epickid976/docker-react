@@ -74,3 +74,116 @@ input, textarea, select {
   font-family: inherit;
   font-size: inherit;
 }
+
+/* ========================================
+   USER PREFERENCES - ACCESSIBILITY
+   ======================================== */
+
+/* High Contrast Mode */
+.high-contrast {
+  --slate-50: #ffffff;
+  --slate-100: #f0f0f0;
+  --slate-200: #e0e0e0;
+  --slate-300: #c0c0c0;
+  --slate-400: #a0a0a0;
+  --slate-500: #808080;
+  --slate-600: #606060;
+  --slate-700: #404040;
+  --slate-800: #202020;
+  --slate-900: #000000;
+}
+
+.high-contrast .dark {
+  /* Enhanced dark mode contrast */
+  --slate-50: #000000;
+  --slate-100: #1a1a1a;
+  --slate-200: #2d2d2d;
+  --slate-300: #404040;
+  --slate-400: #666666;
+  --slate-500: #808080;
+  --slate-600: #b3b3b3;
+  --slate-700: #d9d9d9;
+  --slate-800: #f0f0f0;
+  --slate-900: #ffffff;
+}
+
+.high-contrast {
+  /* Stronger borders and shadows */
+  --border-opacity: 1;
+  --shadow-strength: 2;
+}
+
+.high-contrast * {
+  border-color: currentColor !important;
+}
+
+.high-contrast button,
+.high-contrast a,
+.high-contrast input,
+.high-contrast select,
+.high-contrast textarea {
+  border: 2px solid currentColor !important;
+}
+
+.high-contrast .bg-white {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+.high-contrast .dark .bg-slate-800 {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Large Text Mode */
+.large-text {
+  font-size: 112.5%; /* 18px base instead of 16px */
+}
+
+.large-text h1 {
+  font-size: 2.5rem; /* Larger headings */
+}
+
+.large-text h2 {
+  font-size: 2rem;
+}
+
+.large-text h3 {
+  font-size: 1.5rem;
+}
+
+.large-text h4 {
+  font-size: 1.25rem;
+}
+
+.large-text p,
+.large-text span,
+.large-text div,
+.large-text button,
+.large-text input,
+.large-text select,
+.large-text textarea {
+  font-size: 1.125em; /* 125% of parent */
+  line-height: 1.6; /* Better readability */
+}
+
+.large-text button,
+.large-text .btn {
+  padding: 0.75rem 1.5rem; /* Larger touch targets */
+  min-height: 48px; /* Accessibility standard */
+}
+
+.large-text input,
+.large-text select,
+.large-text textarea {
+  padding: 0.75rem 1rem; /* Larger input fields */
+  min-height: 48px;
+}
+
+/* Combination: High Contrast + Large Text */
+.high-contrast.large-text button,
+.high-contrast.large-text a,
+.high-contrast.large-text input {
+  border-width: 3px !important;
+  font-weight: 600; /* Bolder text for better visibility */
+}

@@ -11,11 +11,12 @@ RUN npm install
 # Then copy the rest of the app
 COPY . .
 
-# Build the app
-RUN npm run build
-
-# Install static server
-RUN npm install -g serve
-
+# Expose port
 EXPOSE 3000
-CMD ["serve", "-s", "build", "-l", "3000"]
+
+# Set environment variables for React dev server
+ENV HOST=0.0.0.0
+ENV PORT=3000
+
+# Run development server with hot reloading
+CMD ["npm", "start"]
