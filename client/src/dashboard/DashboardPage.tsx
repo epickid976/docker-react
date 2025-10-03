@@ -503,8 +503,8 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700">
         <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex-shrink-0">
               <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Droplets className="text-blue-600" size={28} />
                 GoutDeau
@@ -513,50 +513,56 @@ export default function DashboardPage() {
                 Welcome back, {profile?.display_name || user?.email}
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <motion.button
-                onClick={() => setShowReminders(true)}
-                className="p-2 text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                title="Reminders"
-              >
-                <Bell size={20} />
-              </motion.button>
+            
+            {/* Mobile: Full-width layout | Desktop: horizontal row */}
+            <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              {/* Icon buttons grid on mobile, row on desktop */}
+              <div className="grid grid-cols-4 sm:flex sm:items-center gap-2 sm:gap-2">
+                <motion.button
+                  onClick={() => setShowReminders(true)}
+                  className="p-3 sm:p-2 text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Reminders"
+                >
+                  <Bell size={20} />
+                </motion.button>
+                
+                <motion.button
+                  onClick={() => setShowAnalytics(true)}
+                  className="p-3 sm:p-2 text-slate-400 hover:text-green-600 dark:hover:text-green-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Analytics & Insights"
+                >
+                  <BarChart3 size={20} />
+                </motion.button>
+                
+                <motion.button
+                  onClick={() => setShowProfileManager(true)}
+                  className="p-3 sm:p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Profile Settings"
+                >
+                  <User size={20} />
+                </motion.button>
+                
+                <motion.button
+                  onClick={() => setShowPreferences(true)}
+                  className="p-3 sm:p-2 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="User Preferences"
+                >
+                  <Settings size={20} />
+                </motion.button>
+              </div>
               
-              <motion.button
-                onClick={() => setShowAnalytics(true)}
-                className="p-2 text-slate-400 hover:text-green-600 dark:hover:text-green-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                title="Analytics & Insights"
-              >
-                <BarChart3 size={20} />
-              </motion.button>
-              
-              <motion.button
-                onClick={() => setShowProfileManager(true)}
-                className="p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                title="Profile Settings"
-              >
-                <User size={20} />
-              </motion.button>
-              
-              <motion.button
-                onClick={() => setShowPreferences(true)}
-                className="p-2 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                title="User Preferences"
-              >
-                <Settings size={20} />
-              </motion.button>
-              
+              {/* Add Water button - full width on mobile, auto on desktop */}
               <motion.button
                 onClick={() => setShowingAddWater(true)}
-                className="group bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
+                className="group bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 sm:px-4 sm:py-2 rounded-lg font-medium flex items-center justify-center gap-2 whitespace-nowrap"
                 whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.4)" }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}

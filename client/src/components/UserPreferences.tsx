@@ -37,12 +37,17 @@ export default function UserPreferences({ isOpen, onClose }: UserPreferencesProp
     type: 'info'
   });
 
-  // Load preferences from database
+  // Load preferences from database and apply them
   useEffect(() => {
     if (user && isOpen) {
       loadPreferences();
     }
   }, [user, isOpen]);
+
+  // Apply theme on mount and when preferences change
+  useEffect(() => {
+    applyTheme(preferences);
+  }, [preferences]);
 
   const loadPreferences = async () => {
     try {
@@ -53,14 +58,42 @@ export default function UserPreferences({ isOpen, onClose }: UserPreferencesProp
         .single();
 
       if (!error && data) {
-        setPreferences({
+        const loadedPreferences = {
           theme: data.theme || 'system',
           highContrast: data.high_contrast || false,
           largeText: data.large_text || false,
-        });
+        };
+        setPreferences(loadedPreferences);
+        applyTheme(loadedPreferences);
+      } else if (error && error.code === 'PGRST116') {
+        // No preferences found, create default
+        await createDefaultPreferences();
       }
     } catch (err) {
       console.error('Error loading preferences:', err);
+    }
+  };
+
+  const createDefaultPreferences = async () => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('user_preferences')
+        .insert({
+          user_id: user.id,
+          theme: 'system',
+          high_contrast: false,
+          large_text: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+
+      if (error) {
+        console.error('Error creating default preferences:', error);
+      }
+    } catch (err) {
+      console.error('Error creating default preferences:', err);
     }
   };
 
@@ -72,28 +105,47 @@ export default function UserPreferences({ isOpen, onClose }: UserPreferencesProp
 
     setSaving(true);
     try {
-      const { error } = await supabase
+      // First, try to update
+      const { error: updateError } = await supabase
         .from('user_preferences')
-        .upsert({
-          user_id: user.id,
+        .update({
           theme: updatedPreferences.theme,
           high_contrast: updatedPreferences.highContrast,
           large_text: updatedPreferences.largeText,
           updated_at: new Date().toISOString(),
-        });
+        })
+        .eq('user_id', user.id);
 
-      if (error) throw error;
+      // If no rows were updated, insert instead
+      if (updateError && updateError.code === 'PGRST116') {
+        const { error: insertError } = await supabase
+          .from('user_preferences')
+          .insert({
+            user_id: user.id,
+            theme: updatedPreferences.theme,
+            high_contrast: updatedPreferences.highContrast,
+            large_text: updatedPreferences.largeText,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          });
+
+        if (insertError) throw insertError;
+      } else if (updateError) {
+        throw updateError;
+      }
 
       // Apply theme immediately
       applyTheme(updatedPreferences);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving preferences:', error);
       setAlertConfig({
         isOpen: true,
-        message: 'Failed to save preferences. Please try again.',
+        message: `Failed to save preferences: ${error.message || 'Please try again.'}`,
         type: 'error',
         title: 'Error'
       });
+      // Revert preferences on error
+      loadPreferences();
     } finally {
       setSaving(false);
     }
