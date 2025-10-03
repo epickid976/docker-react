@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../supabaseClient";
-import { Droplets, Clock, Smartphone, Watch, Edit, Trash2, Plus, X, Info, User, BarChart3, Bell, Settings } from "lucide-react";
+import { Droplets, Clock, Smartphone, Watch, Edit, Trash2, Plus, X, Info, User, BarChart3, Bell, Settings, Lightbulb } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUnitPreferences } from "../hooks/useUnitPreferences";
 import { UnitSelector, UnitSelectorCompact } from "../components/UnitSelector";
@@ -11,6 +11,7 @@ import { ProfileSetup } from "../components/ProfileSetup";
 import AnalyticsDashboard from "../components/AnalyticsDashboard";
 import RemindersManager from "../components/RemindersManager";
 import UserPreferences from "../components/UserPreferences";
+import SmartRecommendations from "../components/SmartRecommendations";
 import CustomAlert from "../components/CustomAlert";
 
 // 🎓 REACT CONCEPT: TypeScript interfaces are like Swift structs
@@ -317,6 +318,7 @@ export default function DashboardPage() {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showReminders, setShowReminders] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
+  const [showRecommendations, setShowRecommendations] = useState(false);
 
   // 🎓 REACT CONCEPT: useEffect for side effects (like SwiftUI's onAppear)
   // This handles clicking outside the popup to close it
@@ -516,8 +518,8 @@ export default function DashboardPage() {
             
             {/* Mobile: Full-width layout | Desktop: horizontal row */}
             <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              {/* Icon buttons grid on mobile, row on desktop */}
-              <div className="grid grid-cols-4 sm:flex sm:items-center gap-2 sm:gap-2">
+              {/* Icon buttons grid on mobile (3x2 for 5 buttons), row on desktop */}
+              <div className="grid grid-cols-3 sm:flex sm:items-center gap-2 sm:gap-2">
                 <motion.button
                   onClick={() => setShowReminders(true)}
                   className="p-3 sm:p-2 text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
@@ -556,6 +558,16 @@ export default function DashboardPage() {
                   title="User Preferences"
                 >
                   <Settings size={20} />
+                </motion.button>
+                
+                <motion.button
+                  onClick={() => setShowRecommendations(true)}
+                  className="p-3 sm:p-2 text-slate-400 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Smart Recommendations"
+                >
+                  <Lightbulb size={20} />
                 </motion.button>
               </div>
               
@@ -921,6 +933,15 @@ export default function DashboardPage() {
       <UserPreferences 
         isOpen={showPreferences} 
         onClose={() => setShowPreferences(false)} 
+      />
+      
+      <SmartRecommendations 
+        isOpen={showRecommendations} 
+        onClose={() => setShowRecommendations(false)}
+        onApplyGoal={(newGoalMl) => {
+          setDailyGoal({ goal_ml: newGoalMl });
+          loadData();
+        }}
       />
 
       {/* Custom Alert */}
