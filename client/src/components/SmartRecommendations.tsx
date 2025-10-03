@@ -27,7 +27,7 @@ interface AnalyticsData {
 
 export default function SmartRecommendations({ isOpen, onClose, onApplyGoal }: SmartRecommendationsProps) {
   const { user, profile } = useAuth();
-  const { convertFromMl } = useUnitPreferences();
+  const { unit, convertFromMl } = useUnitPreferences();
   const [loading, setLoading] = useState(true);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [selectedActivityLevel, setSelectedActivityLevel] = useState<'sedentary' | 'light' | 'moderate' | 'active' | 'very_active'>('moderate');
@@ -119,7 +119,7 @@ export default function SmartRecommendations({ isOpen, onClose, onApplyGoal }: S
 
       setAlertConfig({
         isOpen: true,
-        message: `Goal updated to ${Math.round(convertFromMl(newGoalMl).value)}${convertFromMl(newGoalMl).unit}!`,
+        message: `Goal updated to ${Math.round(convertFromMl(newGoalMl))} ${unit}!`,
         type: 'success',
         title: 'Success'
       });
@@ -306,9 +306,9 @@ export default function SmartRecommendations({ isOpen, onClose, onApplyGoal }: S
                     </div>
                     <div className="text-right">
                       <div className="text-3xl font-bold text-blue-600">
-                        {Math.round(convertFromMl(recommendation.recommended_ml).value)}
+                        {Math.round(convertFromMl(recommendation.recommended_ml))}
                       </div>
-                      <div className="text-sm text-slate-500">{convertFromMl(recommendation.recommended_ml).unit}</div>
+                      <div className="text-sm text-slate-500">{unit}</div>
                     </div>
                   </div>
                   
@@ -343,13 +343,13 @@ export default function SmartRecommendations({ isOpen, onClose, onApplyGoal }: S
                       <div>
                         <div className="text-sm text-slate-500 dark:text-slate-400">Current Goal</div>
                         <div className="text-2xl font-bold text-slate-900 dark:text-white">
-                          {Math.round(convertFromMl(adjustment.current_goal_ml).value)}{convertFromMl(adjustment.current_goal_ml).unit}
+                          {Math.round(convertFromMl(adjustment.current_goal_ml))} {unit}
                         </div>
                       </div>
                       <div>
                         <div className="text-sm text-slate-500 dark:text-slate-400">Average Intake</div>
                         <div className="text-2xl font-bold text-slate-900 dark:text-white">
-                          {Math.round(convertFromMl(analytics.average_intake_ml).value)}{convertFromMl(analytics.average_intake_ml).unit}
+                          {Math.round(convertFromMl(analytics.average_intake_ml))} {unit}
                         </div>
                       </div>
                     </div>
@@ -374,7 +374,7 @@ export default function SmartRecommendations({ isOpen, onClose, onApplyGoal }: S
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        Apply Recommended Adjustment ({Math.round(convertFromMl(goalAdjustment.new_goal_ml).value)}{convertFromMl(goalAdjustment.new_goal_ml).unit})
+                        Apply Recommended Adjustment ({Math.round(convertFromMl(goalAdjustment.new_goal_ml))} {unit})
                       </motion.button>
                     )}
                   </div>

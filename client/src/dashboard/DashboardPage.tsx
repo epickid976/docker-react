@@ -263,7 +263,7 @@ function WaterEntryCard({
 export default function DashboardPage() {
   const { user, profile, needsProfileSetup, setProfile } = useAuth();
   
-  const { entries, dailyGoal, loading, error, addWaterEntry, deleteWaterEntry, updateWaterEntry } = useWaterData();
+  const { entries, dailyGoal, loading, error, addWaterEntry, deleteWaterEntry, updateWaterEntry, refreshData: loadData } = useWaterData();
   const { 
     unit, 
     setUnit, 
@@ -938,8 +938,8 @@ export default function DashboardPage() {
       <SmartRecommendations 
         isOpen={showRecommendations} 
         onClose={() => setShowRecommendations(false)}
-        onApplyGoal={(newGoalMl) => {
-          setDailyGoal({ goal_ml: newGoalMl });
+        onApplyGoal={() => {
+          // Refresh the data after goal is updated
           loadData();
         }}
       />
