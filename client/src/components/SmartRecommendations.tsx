@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Target, TrendingUp, Lightbulb, Activity, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, Target, TrendingUp, Lightbulb, Activity, CheckCircle2, AlertCircle, Edit3 } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { supabase } from '../supabaseClient';
 import {
@@ -10,6 +10,7 @@ import {
   getGoalAdjustmentRecommendations
 } from '../utils/goalRecommendations';
 import { useUnitPreferences } from '../hooks/useUnitPreferences';
+import { convertAmount } from '../utils/unitConversions';
 import CustomAlert from './CustomAlert';
 
 interface SmartRecommendationsProps {
@@ -31,6 +32,7 @@ export default function SmartRecommendations({ isOpen, onClose, onApplyGoal }: S
   const [loading, setLoading] = useState(true);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [selectedActivityLevel, setSelectedActivityLevel] = useState<'sedentary' | 'light' | 'moderate' | 'active' | 'very_active'>('moderate');
+  const [customGoal, setCustomGoal] = useState<string>('');
   const [alertConfig, setAlertConfig] = useState<{
     isOpen: boolean;
     message: string;
@@ -379,6 +381,62 @@ export default function SmartRecommendations({ isOpen, onClose, onApplyGoal }: S
                     )}
                   </div>
                 )}
+
+                {/* Custom Goal Input */}
+                <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl p-6 border border-indigo-200 dark:border-indigo-800">
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                    <Edit3 size={20} className="text-indigo-600" />
+                    Set Custom Goal
+                  </h3>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">
+                    Have a specific goal in mind? Enter your own daily water intake target.
+                  </p>
+                  
+                  <div className="flex gap-3">
+                    <div className="flex-1">
+                      <input
+                        type="number"
+                        value={customGoal}
+                        onChange={(e) => setCustomGoal(e.target.value)}
+                        placeholder={`Enter amount in ${unit}`}
+                        className="w-full px-4 py-3 rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none transition-colors"
+                      />
+                    </div>
+                    <motion.button
+                      onClick={() => {
+                        const goalValue = parseFloat(customGoal);
+                        if (isNaN(goalValue) || goalValue <= 0) {
+                          setAlertConfig({
+                            isOpen: true,
+                            message: 'Please enter a valid positive number',
+                            type: 'warning',
+                            title: 'Invalid Input'
+                          });
+                          return;
+                        }
+                        
+                        // Convert from current unit to ml
+                        const goalInMl = Math.round(convertAmount(goalValue, unit, 'ml'));
+                        handleApplyRecommendation(goalInMl);
+                        setCustomGoal(''); // Clear input after applying
+                      }}
+                      disabled={!customGoal}
+                      className={`px-6 py-3 rounded-lg font-medium whitespace-nowrap transition-all ${
+                        customGoal
+                          ? 'bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer'
+                          : 'bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 cursor-not-allowed'
+                      }`}
+                      whileHover={customGoal ? { scale: 1.02 } : {}}
+                      whileTap={customGoal ? { scale: 0.98 } : {}}
+                    >
+                      Apply Custom Goal
+                    </motion.button>
+                  </div>
+                  
+                  <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">
+                    💡 Tip: Most adults need 2000-3000ml (68-102oz) of water per day
+                  </div>
+                </div>
 
                 {/* Personalized Suggestions */}
                 {suggestions.length > 0 && (
