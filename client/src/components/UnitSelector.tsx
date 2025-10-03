@@ -3,18 +3,20 @@ import { MeasureUnit } from '../utils/unitConversions';
 
 interface UnitSelectorProps {
   unit: MeasureUnit;
-  setUnit: (unit: MeasureUnit) => void;
+  onUnitChange?: (unit: MeasureUnit) => void;
+  setUnit?: (unit: MeasureUnit) => void;
 }
 
-export const UnitSelector: React.FC<UnitSelectorProps> = ({ unit, setUnit }) => {
+export const UnitSelector: React.FC<UnitSelectorProps> = ({ unit, onUnitChange, setUnit }) => {
   const units: MeasureUnit[] = ['ml', 'oz', 'cup', 'bottle'];
+  const handleChange = onUnitChange || setUnit || (() => {});
 
   return (
     <div className="flex gap-2 bg-slate-100 dark:bg-slate-700 rounded-lg p-1">
       {units.map((u) => (
         <motion.button
           key={u}
-          onClick={() => setUnit(u)}
+          onClick={() => handleChange(u)}
           className={`px-3 py-1 rounded-md text-sm transition-colors ${
             unit === u
               ? 'bg-blue-500 text-white'
@@ -30,13 +32,14 @@ export const UnitSelector: React.FC<UnitSelectorProps> = ({ unit, setUnit }) => 
   );
 };
 
-export const UnitSelectorCompact: React.FC<UnitSelectorProps> = ({ unit, setUnit }) => {
+export const UnitSelectorCompact: React.FC<UnitSelectorProps> = ({ unit, onUnitChange, setUnit }) => {
   const units: MeasureUnit[] = ['ml', 'oz', 'cup', 'bottle'];
+  const handleChange = onUnitChange || setUnit || (() => {});
 
   return (
     <select
       value={unit}
-      onChange={(e) => setUnit(e.target.value as MeasureUnit)}
+      onChange={(e) => handleChange(e.target.value as MeasureUnit)}
       className="px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white border-none text-sm"
     >
       {units.map((u) => (
