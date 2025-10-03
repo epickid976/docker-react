@@ -56,7 +56,12 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd /opt/docker-react
-            git pull origin main
+            
+            echo "🔄 Fetching latest changes from GitHub"
+            git fetch origin main
+            
+            echo "🔄 Resetting to match GitHub (discarding local changes)"
+            git reset --hard origin/main
 
             echo "🧼 Removing old images"
             docker rmi epickid976/react-client:latest || true
