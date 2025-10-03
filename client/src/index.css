@@ -43,11 +43,10 @@ html {
 }
 
 body {
-  /* Safe area insets for notched devices */
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-  padding-top: env(safe-area-inset-top);
-  /* Use padding-bottom OR add to last child - we'll use utility class for more control */
+  /* Don't add padding to body - let backgrounds extend to edges */
+  /* Individual components will handle safe area insets for content */
+  margin: 0;
+  padding: 0;
 }
 
 /* iOS Safari bottom bar safe area - utility class */
