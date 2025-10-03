@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../supabaseClient";
-import { Droplets, Clock, Smartphone, Watch, Edit, Trash2, Plus, X, Info, User, BarChart3, Bell, Settings, Lightbulb } from "lucide-react";
+import { Droplets, Clock, Smartphone, Watch, Edit, Trash2, Plus, X, Info, User, BarChart3, Bell, Settings, Lightbulb, Upload } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUnitPreferences } from "../hooks/useUnitPreferences";
 import { UnitSelector, UnitSelectorCompact } from "../components/UnitSelector";
@@ -13,6 +13,7 @@ import RemindersManager from "../components/RemindersManager";
 import UserPreferences from "../components/UserPreferences";
 import SmartRecommendations from "../components/SmartRecommendations";
 import CustomAlert from "../components/CustomAlert";
+import DataImporter from "../components/DataImporter";
 
 // 🎓 REACT CONCEPT: TypeScript interfaces are like Swift structs
 // In SwiftUI: struct User { let id: UUID; let name: String }
@@ -319,6 +320,7 @@ export default function DashboardPage() {
   const [showReminders, setShowReminders] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
   const [showRecommendations, setShowRecommendations] = useState(false);
+  const [showImporter, setShowImporter] = useState(false);
 
   // 🎓 REACT CONCEPT: useEffect for side effects (like SwiftUI's onAppear)
   // This handles clicking outside the popup to close it
@@ -518,7 +520,7 @@ export default function DashboardPage() {
             
             {/* Mobile: Full-width layout | Desktop: horizontal row */}
             <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              {/* Icon buttons grid on mobile (3x2 for 5 buttons), row on desktop */}
+              {/* Icon buttons grid on mobile (3x2 for 6 buttons), row on desktop */}
               <div className="grid grid-cols-3 sm:flex sm:items-center gap-2 sm:gap-2">
                 <motion.button
                   onClick={() => setShowAnalytics(true)}
@@ -538,6 +540,16 @@ export default function DashboardPage() {
                   title="Smart Recommendations"
                 >
                   <Lightbulb size={20} />
+                </motion.button>
+                
+                <motion.button
+                  onClick={() => setShowImporter(true)}
+                  className="p-3 sm:p-2 text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Import Data"
+                >
+                  <Upload size={20} />
                 </motion.button>
                 
                 <motion.button
@@ -940,6 +952,15 @@ export default function DashboardPage() {
         onClose={() => setShowRecommendations(false)}
         onApplyGoal={() => {
           // Refresh the data after goal is updated
+          loadData();
+        }}
+      />
+      
+      <DataImporter
+        isOpen={showImporter}
+        onClose={() => setShowImporter(false)}
+        onImportComplete={() => {
+          // Refresh the data after import is complete
           loadData();
         }}
       />
