@@ -245,10 +245,10 @@ export default function AuthPage() {
   );
 
   return (
-    <div className="min-h-dvh bg-slate-50 dark:bg-slate-900 flex flex-col" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="min-h-dvh bg-slate-50 dark:bg-slate-900 flex flex-col safe-y">
       {brand}
 
-      <main className="flex-1 grid md:grid-cols-2 items-center mx-auto max-w-7xl w-full gap-8" style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}>
+      <main className="flex-1 grid md:grid-cols-2 items-center mx-auto max-w-7xl w-full gap-8 safe-x">
         {/* Left column */}
         <section className="hidden md:block">
           <div className="max-w-md">

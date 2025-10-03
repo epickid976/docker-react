@@ -505,10 +505,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 safe-y">
       {/* Header */}
       <div className="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700">
-        <div className="max-w-4xl mx-auto px-4 py-6" style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}>
+        <div className="max-w-4xl mx-auto py-6 safe-x">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex-shrink-0">
               <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -606,7 +606,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto py-6" style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}>
+      <div className="max-w-4xl mx-auto py-6 safe-x">
         {/* Progress Card */}
         <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 mb-6">
           <div className="flex items-center justify-between mb-4">
