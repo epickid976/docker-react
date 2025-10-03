@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GoutDeau droplet icon">
   <defs></defs>
-  <!-- full-bleed rounded background (no outer padding) -->
-  <rect x="0" y="0" width="256" height="256" rx="56" fill="#0f172a"/>
+  <!-- full-bleed square background (no rounding/padding) -->
+  <rect x="0" y="0" width="256" height="256" fill="#0f172a"/>
 
   <!-- water drop (solid fill to avoid conversion issues) -->
   <path fill="#3B82F6" d="M128 36c-22 36-54 68-54 102c0 30 24 54 54 54s54-24 54-54c0-34-32-66-54-102z"/>
