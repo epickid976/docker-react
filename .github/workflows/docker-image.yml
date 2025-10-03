@@ -63,6 +63,11 @@ jobs:
             echo "🔄 Resetting to match GitHub (discarding local changes)"
             git reset --hard origin/main
 
+            echo "🔐 Setting up environment variables"
+            export SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
+            export SUPABASE_ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}"
+            export SUPABASE_SERVICE_ROLE_KEY="${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+
             echo "🧼 Removing old images"
             docker rmi epickid976/react-client:latest || true
             docker rmi epickid976/react-server:latest || true
