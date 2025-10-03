@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <!-- Prefer SVG favicon for crisp rendering -->
+    <link rel="icon" type="image/svg+xml" href="%PUBLIC_URL%/favicon.svg" />
+    <!-- Fallback for older browsers -->
+    <link rel="alternate icon" href="%PUBLIC_URL%/favicon.ico" />
     <!-- Enhanced viewport meta tag for better mobile display -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no" />
     
@@ -31,6 +34,7 @@
     <meta property="og:image" content="%PUBLIC_URL%/logo512.png" />
     
     <!-- Apple touch icons for better iOS integration -->
+    <!-- Apple touch icon using the same droplet graphic embedded in a square -->
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="apple-touch-icon" sizes="152x152" href="%PUBLIC_URL%/logo192.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/logo192.png" />

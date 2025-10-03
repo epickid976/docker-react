@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GoutDeau droplet icon">
+  <defs>
+    <linearGradient id="g" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#0ea5e9" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <!-- subtle rounded background to look good in tabs -->
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="#0f172a"/>
+
+  <!-- water drop -->
+  <g filter="url(#s)">
+    <path fill="url(#g)" d="M128 36c-22 36-54 68-54 102c0 30 24 54 54 54s54-24 54-54c0-34-32-66-54-102z"/>
+    <!-- highlight -->
+    <path fill="#93C5FD" opacity="0.55" d="M116 76c-10 16-24 30-24 46c0 18 14 32 32 32 4 0 8-1 12-2-18-6-30-22-30-42 0-12 4-22 10-34z"/>
+  </g>
+</svg>
+
+
