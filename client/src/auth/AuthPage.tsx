@@ -233,7 +233,7 @@ export default function AuthPage() {
   const brand = (
     <header className="sticky top-0 z-10 bg-white/80 dark:bg-slate-950/80 backdrop-blur border-b border-slate-200/60 dark:border-slate-800/60 pt-[env(safe-area-inset-top)]">
       <div className="mx-auto max-w-7xl px-4 py-3 flex items-center gap-2">
-        <div className="text-2xl">💧</div>
+        <img src="/favicon.svg" alt="" className="h-6 w-6" />
         <div className="font-bold tracking-tight text-slate-900 dark:text-slate-100 text-lg">
           GoutDeau
         </div>

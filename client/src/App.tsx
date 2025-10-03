@@ -151,7 +151,7 @@ const Navigation = ({ activeSection, onNavigate, onMeasured }: NavigationProps) 
                 onClick={() => handleNavClick("home")}
                 aria-label="Go to home"
             >
-              <span className="text-2xl">💧</span>
+              <img src="/favicon.svg" alt="" className="h-6 w-6" />
               <span className="font-bold tracking-tight text-slate-900 dark:text-slate-100">
               GoutDeau
             </span>
@@ -421,7 +421,7 @@ const activeSection = useActiveSectionObserver(sectionIds);
             <div className="main-content">
               <FloatingElement delay={0.5}>
                 <div className="logo-section">
-                  <div className="logo text-center">💧</div>
+                  <div className="logo text-center"><img src="/favicon.svg" alt="" style={{ width: '1em', height: '1em' }} /></div>
                   <h1 className="title text-center">GoutDeau</h1>
                 </div>
               </FloatingElement>

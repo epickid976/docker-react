@@ -1,7 +1,7 @@
 export default function ParentPage() {
   return (
     <div style={{ padding: 24 }}>
-      <h1>💧 GoutDeau Parent Dashboard</h1>
+      <h1><img src="/favicon.svg" alt="" style={{ height: 24, width: 24, verticalAlign: 'text-bottom', marginRight: 8 }} /> GoutDeau Parent Dashboard</h1>
       <p>Track your family's hydration habits and health goals.</p>
       
       <div style={{ marginTop: 24, padding: 24, border: "1px solid #e5e7eb", borderRadius: 8 }}>
