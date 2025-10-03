@@ -14,6 +14,7 @@ import UserPreferences from "../components/UserPreferences";
 import SmartRecommendations from "../components/SmartRecommendations";
 import CustomAlert from "../components/CustomAlert";
 import DataImporter from "../components/DataImporter";
+import WearableSync from "../components/WearableSync";
 
 // 🎓 REACT CONCEPT: TypeScript interfaces are like Swift structs
 // In SwiftUI: struct User { let id: UUID; let name: String }
@@ -321,6 +322,7 @@ export default function DashboardPage() {
   const [showPreferences, setShowPreferences] = useState(false);
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [showImporter, setShowImporter] = useState(false);
+  const [showWearableSync, setShowWearableSync] = useState(false);
 
   // 🎓 REACT CONCEPT: useEffect for side effects (like SwiftUI's onAppear)
   // This handles clicking outside the popup to close it
@@ -685,6 +687,18 @@ export default function DashboardPage() {
                         <span className="text-slate-600 dark:text-slate-300">Wearable device</span>
                       </div>
                     </div>
+                    
+                    {/* Wearable Sync Button */}
+                    <button
+                      onClick={() => {
+                        setShowInfoPopup(false);
+                        setShowWearableSync(true);
+                      }}
+                      className="w-full mt-3 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                    >
+                      <Watch size={14} />
+                      Sync Wearable Device
+                    </button>
                   </div>
                   </motion.div>
                 )}
@@ -961,6 +975,15 @@ export default function DashboardPage() {
         onClose={() => setShowImporter(false)}
         onImportComplete={() => {
           // Refresh the data after import is complete
+          loadData();
+        }}
+      />
+      
+      <WearableSync
+        isOpen={showWearableSync}
+        onClose={() => setShowWearableSync(false)}
+        onSyncComplete={() => {
+          // Refresh the data after sync is complete
           loadData();
         }}
       />
