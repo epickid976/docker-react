@@ -8,10 +8,23 @@ import {
   Droplets, 
   X,
   Activity,
-  Zap
+  Zap,
+  Download,
+  FileText,
+  FileJson
 } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { useUnitPreferences } from '../hooks/useUnitPreferences';
+import { useAuth } from '../auth/AuthContext';
+import { 
+  exportToCSV, 
+  exportToJSON, 
+  exportToText,
+  formatDateForExport,
+  formatTimeForExport,
+  type ExportEntry,
+  type ExportSummary
+} from '../utils/dataExport';
 
 // 🎓 REACT CONCEPT: TypeScript interfaces for data structures
 // Like Swift structs, these define the shape of our data
@@ -202,15 +215,66 @@ function getWeekStart(dateString: string): string {
 
 // 🎓 REACT CONCEPT: Main component - like SwiftUI's View
 export default function AnalyticsDashboard({ isOpen, onClose }: AnalyticsDashboardProps) {
+  const { user } = useAuth();
   const { data, loading, error, refetch } = useAnalyticsData();
   const { convertFromMl: convertFromMlNumber, unit } = useUnitPreferences();
   const [activeTab, setActiveTab] = useState<'overview' | 'weekly' | 'monthly' | 'trends'>('overview');
+  const [showExportMenu, setShowExportMenu] = useState(false);
 
   // Convert from ml to current unit with value and unit object
   const convertFromMl = (ml: number) => ({
     value: convertFromMlNumber(ml),
     unit: unit
   });
+
+  const handleExport = async (format: 'csv' | 'json' | 'text') => {
+    if (!user || !data) return;
+
+    try {
+      // Fetch all water entries for the user
+      const { data: entries, error } = await supabase
+        .from('hydration_entries')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('entry_ts', { ascending: false });
+
+      if (error) throw error;
+
+      // Transform entries for export
+      const exportEntries: ExportEntry[] = entries.map(entry => ({
+        date: formatDateForExport(new Date(entry.entry_ts)),
+        time: formatTimeForExport(entry.entry_ts),
+        amount_ml: entry.amount_ml,
+        source: entry.source,
+        note: entry.note
+      }));
+
+      // Calculate summary
+      const summary: ExportSummary = {
+        total_entries: exportEntries.length,
+        total_intake_ml: exportEntries.reduce((sum, e) => sum + e.amount_ml, 0),
+        average_daily_ml: data.averageDailyIntake,
+        date_range: {
+          start: exportEntries.length > 0 ? exportEntries[exportEntries.length - 1].date : formatDateForExport(new Date()),
+          end: exportEntries.length > 0 ? exportEntries[0].date : formatDateForExport(new Date())
+        },
+        export_date: new Date().toLocaleString()
+      };
+
+      // Export based on format
+      if (format === 'csv') {
+        exportToCSV(exportEntries, summary);
+      } else if (format === 'json') {
+        exportToJSON(exportEntries, summary);
+      } else if (format === 'text') {
+        exportToText(exportEntries, summary);
+      }
+
+      setShowExportMenu(false);
+    } catch (err) {
+      console.error('Export error:', err);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -246,12 +310,69 @@ export default function AnalyticsDashboard({ isOpen, onClose }: AnalyticsDashboa
                 </p>
               </div>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5 text-slate-500" />
-            </button>
+            <div className="flex items-center gap-2">
+              {/* Export Button */}
+              <div className="relative">
+                <motion.button
+                  onClick={() => setShowExportMenu(!showExportMenu)}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Export Data"
+                >
+                  <Download size={18} />
+                  Export
+                </motion.button>
+                
+                {/* Export Menu Dropdown */}
+                {showExportMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-700 rounded-lg shadow-xl border border-slate-200 dark:border-slate-600 overflow-hidden z-10"
+                  >
+                    <button
+                      onClick={() => handleExport('csv')}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors text-left"
+                    >
+                      <FileText size={18} className="text-green-600" />
+                      <div>
+                        <div className="font-medium text-slate-900 dark:text-white">CSV Format</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">Excel compatible</div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => handleExport('json')}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors text-left"
+                    >
+                      <FileJson size={18} className="text-blue-600" />
+                      <div>
+                        <div className="font-medium text-slate-900 dark:text-white">JSON Format</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">Structured data</div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => handleExport('text')}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors text-left"
+                    >
+                      <FileText size={18} className="text-purple-600" />
+                      <div>
+                        <div className="font-medium text-slate-900 dark:text-white">Text Report</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">Human readable</div>
+                      </div>
+                    </button>
+                  </motion.div>
+                )}
+              </div>
+              
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
           </div>
 
           {/* Content */}
