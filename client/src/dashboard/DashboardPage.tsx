@@ -11,6 +11,7 @@ import { ProfileSetup } from "../components/ProfileSetup";
 import AnalyticsDashboard from "../components/AnalyticsDashboard";
 import RemindersManager from "../components/RemindersManager";
 import UserPreferences from "../components/UserPreferences";
+import CustomAlert from "../components/CustomAlert";
 
 // 🎓 REACT CONCEPT: TypeScript interfaces are like Swift structs
 // In SwiftUI: struct User { let id: UUID; let name: String }
@@ -277,6 +278,16 @@ export default function DashboardPage() {
   const [showingAddWater, setShowingAddWater] = useState(false);
   const [newAmount, setNewAmount] = useState(250); // Default 250ml
   const [newNote, setNewNote] = useState('');
+  const [alertConfig, setAlertConfig] = useState<{
+    isOpen: boolean;
+    message: string;
+    type: 'success' | 'error' | 'warning' | 'info';
+    title?: string;
+  }>({
+    isOpen: false,
+    message: '',
+    type: 'info'
+  });
 
   // 🎓 REACT CONCEPT: Update default amount when unit changes
   // Like SwiftUI's onAppear or onChange
@@ -389,7 +400,12 @@ export default function DashboardPage() {
         // in the entries mapping with animationDelay
       } catch (error) {
         console.error('Error adding water entry:', error);
-        alert('Failed to add water entry. Please try again.');
+        setAlertConfig({
+          isOpen: true,
+          message: 'Failed to add water entry. Please try again.',
+          type: 'error',
+          title: 'Error'
+        });
       }
     }
   };
@@ -432,10 +448,15 @@ export default function DashboardPage() {
         await new Promise(resolve => setTimeout(resolve, 300));
         
         await deleteWaterEntry(entryId);
-      } catch (error) {
-        console.error('Error deleting water entry:', error);
-        alert('Failed to delete water entry. Please try again.');
-      } finally {
+    } catch (error) {
+      console.error('Error deleting water entry:', error);
+      setAlertConfig({
+        isOpen: true,
+        message: 'Failed to delete water entry. Please try again.',
+        type: 'error',
+        title: 'Error'
+      });
+    } finally {
         setRemovingEntryId(null);
       }
     }
@@ -894,6 +915,15 @@ export default function DashboardPage() {
       <UserPreferences 
         isOpen={showPreferences} 
         onClose={() => setShowPreferences(false)} 
+      />
+
+      {/* Custom Alert */}
+      <CustomAlert
+        isOpen={alertConfig.isOpen}
+        onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        title={alertConfig.title}
       />
     </div>
   );

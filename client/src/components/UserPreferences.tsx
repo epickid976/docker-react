@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sun, Moon, Monitor, Type, Contrast } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { useAuth } from '../auth/AuthContext';
+import CustomAlert from './CustomAlert';
 
 interface UserPreferencesProps {
   isOpen: boolean;
@@ -25,6 +26,16 @@ export default function UserPreferences({ isOpen, onClose }: UserPreferencesProp
     largeText: false,
   });
   const [saving, setSaving] = useState(false);
+  const [alertConfig, setAlertConfig] = useState<{
+    isOpen: boolean;
+    message: string;
+    type: 'success' | 'error' | 'warning' | 'info';
+    title?: string;
+  }>({
+    isOpen: false,
+    message: '',
+    type: 'info'
+  });
 
   // Load preferences from database
   useEffect(() => {
@@ -77,7 +88,12 @@ export default function UserPreferences({ isOpen, onClose }: UserPreferencesProp
       applyTheme(updatedPreferences);
     } catch (error) {
       console.error('Error saving preferences:', error);
-      alert('Failed to save preferences. Please try again.');
+      setAlertConfig({
+        isOpen: true,
+        message: 'Failed to save preferences. Please try again.',
+        type: 'error',
+        title: 'Error'
+      });
     } finally {
       setSaving(false);
     }
@@ -308,6 +324,15 @@ export default function UserPreferences({ isOpen, onClose }: UserPreferencesProp
           </div>
         </motion.div>
       </motion.div>
+
+      {/* Custom Alert */}
+      <CustomAlert
+        isOpen={alertConfig.isOpen}
+        onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        title={alertConfig.title}
+      />
     </AnimatePresence>
   );
 }

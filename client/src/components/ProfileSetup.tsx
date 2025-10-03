@@ -9,6 +9,7 @@ import { useProfile } from '../hooks/useProfile';
 import { MeasurementUnitSelector } from './MeasurementUnitSelector';
 import { TimezonePicker } from './TimezonePicker';
 import { convertHeight, convertWeight, HeightUnit, WeightUnit } from '../utils/unitConversions';
+import CustomAlert from './CustomAlert';
 
 interface ProfileSetupProps {
   isOpen: boolean;
@@ -26,6 +27,16 @@ const steps = [
 export function ProfileSetup({ isOpen, onComplete }: ProfileSetupProps) {
   const { profile, updateProfile } = useProfile();
   const [currentStep, setCurrentStep] = useState(0);
+  const [alertConfig, setAlertConfig] = useState<{
+    isOpen: boolean;
+    message: string;
+    type: 'success' | 'error' | 'warning' | 'info';
+    title?: string;
+  }>({
+    isOpen: false,
+    message: '',
+    type: 'info'
+  });
   const [formData, setFormData] = useState({
     display_name: '',
     height_value: '',
@@ -83,12 +94,20 @@ export function ProfileSetup({ isOpen, onComplete }: ProfileSetupProps) {
     }
 
     if (currentStep === 1 && !formData.display_name.trim()) {
-      alert('Please enter your display name');
+      setAlertConfig({
+        isOpen: true,
+        message: 'Please enter your display name',
+        type: 'warning'
+      });
       return;
     }
 
     if (currentStep === 2 && (!formData.height_value || !formData.weight_value)) {
-      alert('Please enter both height and weight');
+      setAlertConfig({
+        isOpen: true,
+        message: 'Please enter both height and weight',
+        type: 'warning'
+      });
       return;
     }
 
@@ -125,7 +144,12 @@ export function ProfileSetup({ isOpen, onComplete }: ProfileSetupProps) {
       onComplete();
     } catch (error) {
       console.error('Error completing profile setup:', error);
-      alert('Failed to save profile. Please try again.');
+      setAlertConfig({
+        isOpen: true,
+        message: 'Failed to save profile. Please try again.',
+        type: 'error',
+        title: 'Error'
+      });
     } finally {
       setLoading(false);
     }
@@ -371,6 +395,15 @@ export function ProfileSetup({ isOpen, onComplete }: ProfileSetupProps) {
           </div>
         </motion.div>
       </motion.div>
+
+      {/* Custom Alert */}
+      <CustomAlert
+        isOpen={alertConfig.isOpen}
+        onClose={() => setAlertConfig({ ...alertConfig, isOpen: false })}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        title={alertConfig.title}
+      />
     </AnimatePresence>
   );
 }
