@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GoutDeau droplet icon">
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GoutDeau droplet icon (rounded UI)">
   <defs></defs>
   <!-- rounded background for UI and mobile -->
   <rect x="0" y="0" width="256" height="256" rx="56" fill="#0f172a"/>
