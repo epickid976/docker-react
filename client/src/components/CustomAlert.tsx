@@ -1,3 +1,4 @@
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, CheckCircle, XCircle, X } from 'lucide-react';
 
@@ -57,7 +58,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className={`${bgColors[type]} rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
             {/* Close button */}
             <motion.button
