@@ -368,7 +368,7 @@ export default function AdminPage() {
                   </div>
                   <div style={{ display: 'flex', gap: 8 }}>
                     <button onClick={() => redactNote(e.id)} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'pointer' }}>Redact note</button>
-                    <button onClick={() => { if (confirm('Delete entry?')) deleteEntry(e.id); }} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #fecaca', color: '#b91c1c', cursor: 'pointer' }}>Delete</button>
+                    <button onClick={() => { if (window.confirm('Delete entry?')) deleteEntry(e.id); }} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #fecaca', color: '#b91c1c', cursor: 'pointer' }}>Delete</button>
                   </div>
                 </div>
               ))}
