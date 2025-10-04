@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import AuthPage from "./auth/AuthPage";
 import { useAuth } from "./auth/AuthContext";
 import AdminPage from "./admin/AdminPage";
-import { Navigate } from "react-router-dom";
 import { useMemo } from "react";
 import DashboardPage from "./dashboard/DashboardPage";
 import ParentPage from "./parent/ParentPage";
