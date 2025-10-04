@@ -225,7 +225,7 @@ export default function AdminPage() {
             <Link to="/dashboard" className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-blue-700 dark:text-blue-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm">← Back to app</Link>
           </div>
         </div>
-      <p style={{ opacity: 0.7 }}>Signed in as {profile?.display_name || user?.email}</p>
+      <p style={{ opacity: 0.7, marginBottom: 5}}>Signed in as {profile?.display_name || user?.email}</p>
 
         {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-4">
@@ -269,7 +269,7 @@ export default function AdminPage() {
                 {users.map((u) => (
                   <div key={u.user_id} className="flex items-center justify-between p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 mb-1">
                         <span className="font-semibold text-slate-900 dark:text-white">{u.display_name || '(no name)'}</span>
                         {u.is_admin && (
                           <span className="inline-flex items-center gap-1 text-xs text-amber-700 bg-amber-100 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded px-2 py-0.5">
