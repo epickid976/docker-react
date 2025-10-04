@@ -1,6 +1,7 @@
 import { useAuth } from "../auth/AuthContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 
 export default function AdminPage() {
   const { user, profile } = useAuth();
@@ -10,7 +11,10 @@ export default function AdminPage() {
     <div style={{ padding: 24 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
         <h1>GoutDeau Admin</h1>
-        <Link to="/dashboard" style={{ color: '#2563eb', textDecoration: 'none' }}>← Back to app</Link>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <button onClick={async () => { await supabase.auth.signOut(); }} style={{ color: '#dc2626', background: 'transparent', border: '1px solid #fecaca', padding: '6px 10px', borderRadius: 8, cursor: 'pointer' }}>Log out</button>
+          <Link to="/dashboard" style={{ color: '#2563eb', textDecoration: 'none' }}>← Back to app</Link>
+        </div>
       </div>
       <p style={{ opacity: 0.7 }}>Signed in as {profile?.display_name || user?.email}</p>
 

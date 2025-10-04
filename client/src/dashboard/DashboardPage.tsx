@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../supabaseClient";
-import { Droplets, Clock, Smartphone, Watch, Edit, Trash2, Plus, X, Info, User, BarChart3, Bell, Settings, Lightbulb, Upload, Shield } from "lucide-react";
+import { Droplets, Clock, Smartphone, Watch, Edit, Trash2, Plus, X, Info, User, BarChart3, Bell, Settings, Lightbulb, Upload, Shield, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUnitPreferences } from "../hooks/useUnitPreferences";
@@ -595,6 +595,17 @@ export default function DashboardPage() {
                     <Shield size={20} />
                   </Link>
                 )}
+
+                {/* Logout */}
+                <motion.button
+                  onClick={async () => { await supabase.auth.signOut(); }}
+                  className="p-3 sm:p-2 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Log out"
+                >
+                  <LogOut size={20} />
+                </motion.button>
               </div>
               
               {/* Add Water button - full width on mobile, auto on desktop */}
