@@ -2,6 +2,7 @@ import { useAuth } from "../auth/AuthContext";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import { Users as UsersIcon, BarChart3, Settings as SettingsIcon, Shield, Search as SearchIcon, Crown, RefreshCcw, Check, X } from "lucide-react";
 
 export default function AdminPage() {
   const { user, profile } = useAuth();
@@ -206,176 +207,186 @@ export default function AdminPage() {
   }, [activeTab]);
 
   return (
-    <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-        <h1>GoutDeau Admin</h1>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <button onClick={async () => { await supabase.auth.signOut(); }} style={{ color: '#dc2626', background: 'transparent', border: '1px solid #fecaca', padding: '6px 10px', borderRadius: 8, cursor: 'pointer' }}>Log out</button>
-          <Link to="/dashboard" style={{ color: '#2563eb', textDecoration: 'none' }}>← Back to app</Link>
-        </div>
-      </div>
-      <p style={{ opacity: 0.7 }}>Signed in as {profile?.display_name || user?.email}</p>
-
-      {/* Tabs */}
-      <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
-        {[
-          { key: 'users', label: 'User Management' },
-          { key: 'analytics', label: 'Analytics' },
-          { key: 'settings', label: 'System Settings' },
-          { key: 'moderation', label: 'Content Moderation' },
-        ].map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key as any)}
-            style={{
-              padding: '8px 12px',
-              borderRadius: 8,
-              border: '1px solid #e5e7eb',
-              background: activeTab === tab.key ? '#eff6ff' : 'white',
-              color: activeTab === tab.key ? '#1d4ed8' : '#0f172a',
-              cursor: 'pointer'
-            }}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Panels */}
-      <div style={{ marginTop: 16, padding: 24, border: "1px solid #e5e7eb", borderRadius: 8 }}>
-        {activeTab === 'users' && (
-          <div>
-            <h2 style={{ marginBottom: 12 }}>User Management</h2>
-            {!isAdmin && <div style={{ color: '#b91c1c', marginBottom: 12 }}>You do not have admin permissions.</div>}
-            <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-              <input
-                placeholder="Search by name…"
-                value={userSearch}
-                onChange={(e) => setUserSearch(e.target.value)}
-                style={{ padding: '8px 10px', border: '1px solid #e5e7eb', borderRadius: 8, minWidth: 240 }}
-              />
-              <button onClick={loadUsers} style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'pointer' }}>Search</button>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between gap-3 mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-blue-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+              <Shield className="text-blue-600" size={22} />
             </div>
-            {usersLoading && <div>Loading users…</div>}
-            {usersError && <div style={{ color: '#b91c1c' }}>{usersError}</div>}
-            <div style={{ display: 'grid', gap: 8 }}>
-              {users.map((u) => (
-                <div key={u.user_id} style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>{u.display_name || '(no name)'}</div>
-                    <div style={{ opacity: 0.7, fontSize: 12 }}>{u.user_id}</div>
-                    <User7d userId={u.user_id} fetchCount={fetchUser7DayCount} />
-                  </div>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <span style={{ fontSize: 12, opacity: 0.8 }}>{u.is_admin ? 'Admin' : 'User'}</span>
-                    <button
-                      onClick={async () => {
-                        const next = !u.is_admin;
-                        const err = await toggleAdmin(u.user_id, next);
-                        if (err) alert('Failed to update admin: ' + err.message);
-                      }}
-                      style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'pointer' }}
-                    >
-                      {u.is_admin ? 'Revoke admin' : 'Make admin'}
-                    </button>
-                  </div>
-                </div>
-              ))}
-              {(!usersLoading && users.length === 0) && <div style={{ opacity: 0.7 }}>No users found.</div>}
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">GoutDeau Admin</h1>
+              <p className="text-slate-600 dark:text-slate-400 text-sm">Signed in as {profile?.display_name || user?.email}</p>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <button onClick={async () => { await supabase.auth.signOut(); }} className="px-3 py-2 rounded-lg border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-950 text-sm">Log out</button>
+            <Link to="/dashboard" className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-blue-700 dark:text-blue-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm">← Back to app</Link>
+          </div>
+        </div>
+      <p style={{ opacity: 0.7 }}>Signed in as {profile?.display_name || user?.email}</p>
+
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {[{ key: 'users', label: 'User Management', icon: <UsersIcon size={16} /> }, { key: 'analytics', label: 'Analytics', icon: <BarChart3 size={16} /> }, { key: 'settings', label: 'System Settings', icon: <SettingsIcon size={16} /> }, { key: 'moderation', label: 'Content Moderation', icon: <Shield size={16} /> }].map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-colors ${activeTab === tab.key ? 'bg-blue-50 dark:bg-slate-800 border-blue-200 dark:border-slate-700 text-blue-700 dark:text-blue-300' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Panels */}
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+        {activeTab === 'users' && (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">User Management</h2>
+                {!isAdmin && <div className="text-red-600 dark:text-red-400 text-sm">No admin permissions</div>}
+              </div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="relative flex-1 max-w-sm">
+                  <SearchIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    placeholder="Search by name…"
+                    value={userSearch}
+                    onChange={(e) => setUserSearch(e.target.value)}
+                    className="w-full pl-8 pr-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                  />
+                </div>
+                <button onClick={loadUsers} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">
+                  <RefreshCcw size={14} /> Refresh
+                </button>
+              </div>
+              {usersLoading && <div className="text-slate-600 dark:text-slate-400">Loading users…</div>}
+              {usersError && <div className="text-red-600 dark:text-red-400">{usersError}</div>}
+              <div className="grid gap-3">
+                {users.map((u) => (
+                  <div key={u.user_id} className="flex items-center justify-between p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-slate-900 dark:text-white">{u.display_name || '(no name)'}</span>
+                        {u.is_admin && (
+                          <span className="inline-flex items-center gap-1 text-xs text-amber-700 bg-amber-100 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded px-2 py-0.5">
+                            <Crown size={12} /> Admin
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">{u.user_id}</div>
+                      <User7d userId={u.user_id} fetchCount={fetchUser7DayCount} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={async () => {
+                          const next = !u.is_admin;
+                          const err = await toggleAdmin(u.user_id, next);
+                          if (err) alert('Failed to update admin: ' + err.message);
+                        }}
+                        className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-colors ${u.is_admin ? 'border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-900/20' : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
+                      >
+                        {u.is_admin ? <X size={14} /> : <Check size={14} />}
+                        {u.is_admin ? 'Revoke admin' : 'Make admin'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {(!usersLoading && users.length === 0) && <div className="text-slate-500 dark:text-slate-400">No users found.</div>}
+              </div>
+            </div>
         )}
 
         {activeTab === 'analytics' && (
-          <div>
-            <h2 style={{ marginBottom: 12 }}>App Analytics</h2>
-            {analyticsLoading && <div>Loading…</div>}
-            {analyticsError && <div style={{ color: '#b91c1c' }}>{analyticsError}</div>}
-            {analytics && (
-              <div style={{ display: 'grid', gap: 12 }}>
-                <div style={{ display: 'flex', gap: 12 }}>
-                  <Metric label="Total Users" value={analytics.totalUsers} />
-                  <Metric label="DAU (today)" value={analytics.dau} />
-                  <Metric label="Entries Today" value={analytics.entriesToday} />
-                </div>
-                <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 12 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 8 }}>Entries (last 7 days)</div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: 8 }}>
-                    {analytics.last7.map((d) => (
-                      <div key={d.date} style={{ textAlign: 'center' }}>
-                        <div style={{ height: 60, background: '#eff6ff', border: '1px solid #e5e7eb', borderRadius: 6, position: 'relative' }}>
-                          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: Math.min(56, d.count) , background: '#3b82f6', borderRadius: 6 }} />
-                        </div>
-                        <div style={{ fontSize: 12, opacity: 0.7, marginTop: 4 }}>{d.date.slice(5)}</div>
-                        <div style={{ fontSize: 12 }}>{d.count}</div>
-                      </div>
-                    ))}
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">App Analytics</h2>
+              {analyticsLoading && <div className="text-slate-600 dark:text-slate-400">Loading…</div>}
+              {analyticsError && <div className="text-red-600 dark:text-red-400">{analyticsError}</div>}
+              {analytics && (
+                <div className="grid gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <Metric label="Total Users" value={analytics.totalUsers} />
+                    <Metric label="DAU (today)" value={analytics.dau} />
+                    <Metric label="Entries Today" value={analytics.entriesToday} />
                   </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {activeTab === 'settings' && (
-          <div>
-            <h2 style={{ marginBottom: 12 }}>System Settings</h2>
-            <div style={{ display: 'grid', gap: 12, marginBottom: 16 }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <input
-                  type="checkbox"
-                  checked={flags.smartRecommendations}
-                  onChange={(e) => { const v = e.target.checked; setFlags(s => ({ ...s, smartRecommendations: v })); setFlag('smartRecommendations', v); }}
-                />
-                Smart Recommendations
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <input
-                  type="checkbox"
-                  checked={flags.wearableSync}
-                  onChange={(e) => { const v = e.target.checked; setFlags(s => ({ ...s, wearableSync: v })); setFlag('wearableSync', v); }}
-                />
-                Wearable Sync
-              </label>
-            </div>
-            <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 12 }}>
-              <div style={{ fontWeight: 600, marginBottom: 8 }}>Environment & Health</div>
-              <div style={{ marginBottom: 6 }}>Env: {process.env.NODE_ENV}</div>
-              <button onClick={loadHealth} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'pointer', marginBottom: 8 }}>Check /health</button>
-              {healthError && <div style={{ color: '#b91c1c' }}>{healthError}</div>}
-              {health && (
-                <div>
-                  <div>Status: {health.status}</div>
-                  <div>WebSocket connections: {health.connections}</div>
+                  <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                    <div className="font-semibold text-slate-900 dark:text-white mb-2">Entries (last 7 days)</div>
+                    <div className="grid grid-cols-7 gap-3">
+                      {analytics.last7.map((d) => (
+                        <div key={d.date} className="text-center">
+                          <div className="h-28 bg-blue-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded relative overflow-hidden">
+                            <div className="absolute bottom-0 left-0 right-0 bg-blue-600" style={{ height: Math.min(100, d.count * 6) }} />
+                          </div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">{d.date.slice(5)}</div>
+                          <div className="text-xs text-slate-700 dark:text-slate-300">{d.count}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
-          </div>
+        )}
+
+        {activeTab === 'settings' && (
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">System Settings</h2>
+              <div className="grid gap-3 mb-4">
+                <ToggleRow
+                  label="Smart Recommendations"
+                  checked={flags.smartRecommendations}
+                  onChange={(v) => { setFlags(s => ({ ...s, smartRecommendations: v })); setFlag('smartRecommendations', v); }}
+                />
+                <ToggleRow
+                  label="Wearable Sync"
+                  checked={flags.wearableSync}
+                  onChange={(v) => { setFlags(s => ({ ...s, wearableSync: v })); setFlag('wearableSync', v); }}
+                />
+              </div>
+              <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                <div className="font-semibold text-slate-900 dark:text-white mb-2">Environment & Health</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">Env: {process.env.NODE_ENV}</div>
+                <button onClick={loadHealth} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 mb-2">
+                  <RefreshCcw size={14} /> Check /health
+                </button>
+                {healthError && <div className="text-red-600 dark:text-red-400">{healthError}</div>}
+                {health && (
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="text-slate-700 dark:text-slate-300">Status: <span className="font-medium">{health.status}</span></div>
+                    <div className="text-slate-700 dark:text-slate-300">WS connections: <span className="font-medium">{health.connections}</span></div>
+                  </div>
+                )}
+              </div>
+            </div>
         )}
 
         {activeTab === 'moderation' && (
-          <div>
-            <h2 style={{ marginBottom: 12 }}>Content Moderation</h2>
-            {modLoading && <div>Loading…</div>}
-            {modError && <div style={{ color: '#b91c1c' }}>{modError}</div>}
-            <div style={{ display: 'grid', gap: 8 }}>
-              {modEntries.map((e) => (
-                <div key={e.id} style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>{new Date(e.entry_ts).toLocaleString()}</div>
-                    <div style={{ opacity: 0.8, marginTop: 4 }}>User: {e.user_id}</div>
-                    <div style={{ marginTop: 6, whiteSpace: 'pre-wrap' }}>{e.note}</div>
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Content Moderation</h2>
+              {modLoading && <div className="text-slate-600 dark:text-slate-400">Loading…</div>}
+              {modError && <div className="text-red-600 dark:text-red-400">{modError}</div>}
+              <div className="grid gap-3">
+                {modEntries.map((e) => (
+                  <div key={e.id} className="flex items-start justify-between p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                    <div>
+                      <div className="font-semibold text-slate-900 dark:text-white">{new Date(e.entry_ts).toLocaleString()}</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">User: {e.user_id}</div>
+                      <div className="mt-3 text-slate-800 dark:text-slate-200 whitespace-pre-wrap">{e.note}</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => redactNote(e.id)} className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 text-sm">Redact note</button>
+                      <button onClick={() => { if (window.confirm('Delete entry?')) deleteEntry(e.id); }} className="px-3 py-2 rounded-lg border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-950 text-sm">Delete</button>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button onClick={() => redactNote(e.id)} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'pointer' }}>Redact note</button>
-                    <button onClick={() => { if (window.confirm('Delete entry?')) deleteEntry(e.id); }} style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #fecaca', color: '#b91c1c', cursor: 'pointer' }}>Delete</button>
-                  </div>
-                </div>
-              ))}
-              {(!modLoading && modEntries.length === 0) && <div style={{ opacity: 0.7 }}>No items with notes.</div>}
+                ))}
+                {(!modLoading && modEntries.length === 0) && <div className="text-slate-500 dark:text-slate-400">No items with notes.</div>}
+              </div>
             </div>
-          </div>
         )}
+        </div>
       </div>
     </div>
   );
@@ -383,9 +394,9 @@ export default function AdminPage() {
 
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 12, minWidth: 140 }}>
-      <div style={{ fontSize: 12, opacity: 0.7 }}>{label}</div>
-      <div style={{ fontSize: 22, fontWeight: 700 }}>{value}</div>
+    <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-white dark:bg-slate-900">
+      <div className="text-xs text-slate-500 dark:text-slate-400">{label}</div>
+      <div className="text-2xl font-bold text-slate-900 dark:text-white">{value}</div>
     </div>
   );
 }
@@ -393,5 +404,20 @@ function Metric({ label, value }: { label: string; value: number }) {
 function User7d({ userId, fetchCount }: { userId: string; fetchCount: (id: string) => Promise<number> }) {
   const [count, setCount] = useState<number | null>(null);
   useEffect(() => { let mounted = true; fetchCount(userId).then(c => { if (mounted) setCount(c); }); return () => { mounted = false; }; }, [userId]);
-  return <div style={{ fontSize: 12, opacity: 0.8, marginTop: 6 }}>Entries last 7 days: {count ?? '…'}</div>;
+  return <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Entries last 7 days: {count ?? '…'}</div>;
+}
+
+function ToggleRow({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+      <span className="text-slate-800 dark:text-slate-200">{label}</span>
+      <button
+        onClick={() => onChange(!checked)}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${checked ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-600'}`}
+        aria-pressed={checked}
+      >
+        <span className={`inline-block h-5 w-5 transform rounded-full bg-white dark:bg-slate-200 transition-transform ${checked ? 'translate-x-5' : 'translate-x-1'}`} />
+      </button>
+    </div>
+  );
 }
