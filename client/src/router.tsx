@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import AuthPage from "./auth/AuthPage";
 import { useAuth } from "./auth/AuthContext";
 import AdminPage from "./admin/AdminPage";
+import { Navigate } from "react-router-dom";
+import { useMemo } from "react";
 import DashboardPage from "./dashboard/DashboardPage";
 import ParentPage from "./parent/ParentPage";
 import Landing from "./App";
@@ -19,6 +21,19 @@ function Protected({
   const { user, loading } = useAuth();
   if (loading) return <div>Loading…</div>;
   if (!user) return <Navigate to="/auth" replace />;
+  return children;
+}
+
+function AdminOnly({ children }: { children: JSX.Element }) {
+  const { user, profile, loading } = useAuth();
+  const isAdmin = useMemo(() => {
+    const role = (profile as any)?.role;
+    const flag = (profile as any)?.is_admin;
+    return role === 'SYSTEM_ADMIN' || flag === true;
+  }, [profile]);
+  if (loading) return <div>Loading…</div>;
+  if (!user) return <Navigate to="/auth" replace />;
+  if (!isAdmin) return <Navigate to="/dashboard" replace />;
   return children;
 }
 
@@ -103,9 +118,9 @@ export default function AppRouter() {
         <Route
           path="/admin"
           element={
-            <Protected>
+            <AdminOnly>
               <AdminPage />
-            </Protected>
+            </AdminOnly>
           }
         />
         <Route

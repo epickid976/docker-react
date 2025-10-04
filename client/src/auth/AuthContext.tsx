@@ -15,6 +15,9 @@ export interface UserProfile {
     timezone: string;
     created_at: string;
     updated_at: string;
+    // Optional admin/role fields if present in DB
+    role?: string | null;
+    is_admin?: boolean | null;
 }
 
 type AuthContextType = {

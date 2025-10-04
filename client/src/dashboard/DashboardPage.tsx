@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../supabaseClient";
-import { Droplets, Clock, Smartphone, Watch, Edit, Trash2, Plus, X, Info, User, BarChart3, Bell, Settings, Lightbulb, Upload } from "lucide-react";
+import { Droplets, Clock, Smartphone, Watch, Edit, Trash2, Plus, X, Info, User, BarChart3, Bell, Settings, Lightbulb, Upload, Shield } from "lucide-react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUnitPreferences } from "../hooks/useUnitPreferences";
 import { UnitSelector, UnitSelectorCompact } from "../components/UnitSelector";
@@ -264,6 +265,7 @@ function WaterEntryCard({
 // 🎓 REACT CONCEPT: This is the main component, like a SwiftUI ContentView
 export default function DashboardPage() {
   const { user, profile, needsProfileSetup, setProfile } = useAuth();
+  const isAdmin = (profile as any)?.role === 'SYSTEM_ADMIN' || (profile as any)?.is_admin === true;
   
   const { entries, dailyGoal, loading, error, addWaterEntry, deleteWaterEntry, updateWaterEntry, refreshData: loadData } = useWaterData();
   const { 
@@ -583,6 +585,16 @@ export default function DashboardPage() {
                 >
                   <Settings size={20} />
                 </motion.button>
+
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="p-3 sm:p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center"
+                    title="Admin Panel"
+                  >
+                    <Shield size={20} />
+                  </Link>
+                )}
               </div>
               
               {/* Add Water button - full width on mobile, auto on desktop */}
