@@ -3,13 +3,13 @@ services:
     build:
       context: ./client
     ports:
-      - "3002:3000"
+      - "3002:3002"
     environment:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
       - FAST_REFRESH=true
       - HOST=0.0.0.0
-      - PORT=3000
+      - PORT=3002
       - REACT_APP_SERVER_URL=ws://localhost:5002
     volumes:
       - ./client:/app
@@ -20,9 +20,9 @@ services:
     build:
       context: ./server
     ports:
-      - "5002:5000"
+      - "5002:5002"
     environment:
-      - PORT=${PORT:-5000}
+      - PORT=${PORT:-5002}
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}

@@ -12,11 +12,11 @@ RUN npm install
 COPY . .
 
 # Expose port
-EXPOSE 3000
+EXPOSE 3002
 
 # Set environment variables for React dev server
 ENV HOST=0.0.0.0
-ENV PORT=3000
+ENV PORT=3002
 
 # Run development server with hot reloading
 CMD ["npm", "start"]
