@@ -41,7 +41,8 @@ class WebSocketService {
 
       try {
         // Connect to the server WebSocket endpoint
-        this.ws = new WebSocket('ws://localhost:5001/ws');
+        const serverUrl = process.env.REACT_APP_SERVER_URL || 'ws://localhost:5002';
+        this.ws = new WebSocket(`${serverUrl}/ws`);
 
         this.ws.onopen = () => {
           console.log('✅ WebSocket connected');
