@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { supabase } from "../supabaseClient";
 import { Droplets, Clock, Smartphone, Watch, Edit, Trash2, Plus, X, Info, User, BarChart3, Bell, Settings, Lightbulb, Upload, Shield, LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUnitPreferences } from "../hooks/useUnitPreferences";
 import { UnitSelector, UnitSelectorCompact } from "../components/UnitSelector";
@@ -265,6 +265,7 @@ function WaterEntryCard({
 // 🎓 REACT CONCEPT: This is the main component, like a SwiftUI ContentView
 export default function DashboardPage() {
   const { user, profile, needsProfileSetup, setProfile } = useAuth();
+  const navigate = useNavigate();
   const isAdmin = (profile as any)?.role === 'SYSTEM_ADMIN' || (profile as any)?.is_admin === true;
   
   const { entries, dailyGoal, loading, error, addWaterEntry, deleteWaterEntry, updateWaterEntry, refreshData: loadData } = useWaterData();
@@ -513,7 +514,10 @@ export default function DashboardPage() {
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <h1 
+                className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                onClick={() => navigate('/')}
+              >
                 <Droplets className="text-blue-600" size={28} />
                 GoutDeau
               </h1>

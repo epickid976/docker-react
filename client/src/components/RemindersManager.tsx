@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import { notificationService } from '../services/NotificationService';
-import { webSocketService } from '../services/WebSocketService';
 
 // 🎓 REACT CONCEPT: TypeScript interfaces for data structures
 // Like Swift structs, these define the shape of our data
@@ -121,9 +120,6 @@ function useReminders() {
         console.error('❌ Invalid reminder data:', data);
         throw new Error('Invalid reminder data received');
       }
-      
-      // Sync with server
-      webSocketService.syncReminders();
     } catch (err: any) {
       console.error('Error adding reminder:', err);
       setError(err.message);
@@ -149,9 +145,6 @@ function useReminders() {
         console.error('❌ Invalid reminder data:', data);
         throw new Error('Invalid reminder data received');
       }
-      
-      // Sync with server
-      webSocketService.syncReminders();
     } catch (err: any) {
       console.error('Error updating reminder:', err);
       setError(err.message);
@@ -167,9 +160,6 @@ function useReminders() {
 
       if (error) throw error;
       setReminders(prev => prev.filter(r => r.id !== id));
-      
-      // Sync with server
-      webSocketService.syncReminders();
     } catch (err: any) {
       console.error('Error deleting reminder:', err);
       setError(err.message);
@@ -250,37 +240,6 @@ export default function RemindersManager({ isOpen, onClose }: RemindersManagerPr
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 title="Test Client Notification"
-              >
-                <Bell className="w-5 h-5" />
-              </motion.button>
-              <motion.button
-                onClick={async () => {
-                  const { data: { user } } = await supabase.auth.getUser();
-                  if (user) {
-                    webSocketService.requestTestNotification(user.id);
-                  }
-                }}
-                className="p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                title="Test Server Notification"
-              >
-                <Play className="w-5 h-5" />
-              </motion.button>
-              <motion.button
-                onClick={async () => {
-                  const { data: { user } } = await supabase.auth.getUser();
-                  if (user) {
-                    webSocketService.sendMessage({ 
-                      type: 'create_test_reminder', 
-                      userId: user.id 
-                    });
-                  }
-                }}
-                className="p-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                title="Create Test Reminder (1 min from now)"
               >
                 <Bell className="w-5 h-5" />
               </motion.button>

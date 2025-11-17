@@ -148,7 +148,13 @@ const Navigation = ({ activeSection, onNavigate, onMeasured }: NavigationProps) 
             {/* Brand */}
             <button
                 className="flex items-center gap-2 select-none"
-                onClick={() => handleNavClick("home")}
+                onClick={() => {
+                  if (window.location.pathname !== '/') {
+                    navigate('/');
+                  } else {
+                    handleNavClick("home");
+                  }
+                }}
                 aria-label="Go to home"
             >
               <img src="/favicon.svg" alt="" className="h-6 w-6" />
