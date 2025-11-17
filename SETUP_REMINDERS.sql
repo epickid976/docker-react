@@ -16,28 +16,23 @@ CREATE TABLE IF NOT EXISTS public.reminders (
   days_of_week INTEGER[] NOT NULL CHECK (
     array_length(days_of_week, 1) > 0 AND
     array_length(days_of_week, 1) <= 7 AND
-    (SELECT bool_and(d >= 1 AND d <= 7) FROM unnest(days_of_week) AS d)
+    (SELECT COUNT(*) = 0 FROM unnest(days_of_week) AS d WHERE d < 1 OR d > 7)
   ),
   enabled BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Add CHECK constraint for days_of_week if it doesn't exist
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint 
-    WHERE conname = 'reminders_days_of_week_check'
-  ) THEN
-    ALTER TABLE public.reminders 
-    ADD CONSTRAINT reminders_days_of_week_check CHECK (
-      array_length(days_of_week, 1) > 0 AND
-      array_length(days_of_week, 1) <= 7 AND
-      (SELECT bool_and(d >= 1 AND d <= 7) FROM unnest(days_of_week) AS d)
-    );
-  END IF;
-END $$;
+-- Drop existing CHECK constraint if it exists (to update it)
+ALTER TABLE IF EXISTS public.reminders DROP CONSTRAINT IF EXISTS reminders_days_of_week_check;
+
+-- Add CHECK constraint for days_of_week
+ALTER TABLE public.reminders 
+ADD CONSTRAINT reminders_days_of_week_check CHECK (
+  array_length(days_of_week, 1) > 0 AND
+  array_length(days_of_week, 1) <= 7 AND
+  (SELECT COUNT(*) = 0 FROM unnest(days_of_week) AS d WHERE d < 1 OR d > 7)
+);
 
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.reminders ENABLE ROW LEVEL SECURITY;
