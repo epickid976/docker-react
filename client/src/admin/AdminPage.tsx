@@ -1,11 +1,12 @@
 import { useAuth } from "../auth/AuthContext";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { Users as UsersIcon, BarChart3, Settings as SettingsIcon, Shield, Search as SearchIcon, Crown, RefreshCcw, Check, X } from "lucide-react";
 
 export default function AdminPage() {
   const { user, profile } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'users' | 'analytics' | 'settings' | 'moderation'>('users');
   const isAdmin = useMemo(() => (profile as any)?.role === 'SYSTEM_ADMIN' || (profile as any)?.is_admin === true, [profile]);
 
@@ -216,7 +217,12 @@ export default function AdminPage() {
               <Shield className="text-blue-600" size={22} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">GoutDeau Admin</h1>
+              <h1 
+                className="text-2xl font-bold text-slate-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                onClick={() => navigate('/dashboard')}
+              >
+                GoutDeau Admin
+              </h1>
               <p className="text-slate-600 dark:text-slate-400 text-sm">Signed in as {profile?.display_name || user?.email}</p>
             </div>
           </div>

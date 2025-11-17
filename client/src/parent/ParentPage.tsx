@@ -1,7 +1,18 @@
+import { useNavigate } from "react-router-dom";
+
 export default function ParentPage() {
+  const navigate = useNavigate();
+  
   return (
     <div style={{ padding: 24 }}>
-      <h1><img src="/favicon.svg" alt="" style={{ height: 24, width: 24, verticalAlign: 'text-bottom', marginRight: 8 }} /> GoutDeau Parent Dashboard</h1>
+      <h1 
+        style={{ cursor: 'pointer' }}
+        onClick={() => navigate('/dashboard')}
+        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+      >
+        <img src="/favicon.svg" alt="" style={{ height: 24, width: 24, verticalAlign: 'text-bottom', marginRight: 8 }} /> GoutDeau Parent Dashboard
+      </h1>
       <p>Track your family's hydration habits and health goals.</p>
       
       <div style={{ marginTop: 24, padding: 24, border: "1px solid #e5e7eb", borderRadius: 8 }}>

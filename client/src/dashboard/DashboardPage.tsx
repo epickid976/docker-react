@@ -516,7 +516,7 @@ export default function DashboardPage() {
             <div className="flex-shrink-0">
               <h1 
                 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/dashboard')}
               >
                 <Droplets className="text-blue-600" size={28} />
                 GoutDeau

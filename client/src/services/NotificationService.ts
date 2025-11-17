@@ -109,11 +109,14 @@ class NotificationService {
         return;
       }
 
-      // Check if it's the right time (within 1 minute window)
+      // Check if it's the right time (within 2 seconds window - only trigger when time has arrived)
       const reminderTime = reminder.reminder_time;
       const timeDiff = this.getTimeDifference(currentTime, reminderTime);
       
-      if (timeDiff >= 0 && timeDiff < 60) { // Within 1 minute
+      // Only trigger if we're at or past the reminder time (within 2 seconds tolerance)
+      // timeDiff is negative when current time is past reminder time
+      // We want: reminder time <= current time (within 2 seconds)
+      if (timeDiff <= 2 && timeDiff >= -2) { // Within 2 seconds of the exact time
         // Check if we haven't already shown this reminder today
         const reminderKey = `${reminder.id}-${now.toDateString()}`;
         const lastShown = localStorage.getItem(`reminder_${reminderKey}`);

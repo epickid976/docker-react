@@ -239,7 +239,7 @@ export default function RemindersManager({ isOpen, onClose }: RemindersManagerPr
                 className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                title="Test Client Notification"
+                title="Test Notification - Click to test browser notifications"
               >
                 <Bell className="w-5 h-5" />
               </motion.button>
@@ -248,13 +248,14 @@ export default function RemindersManager({ isOpen, onClose }: RemindersManagerPr
                 className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                title="Add Reminder"
+                title="Add New Reminder"
               >
                 <Plus className="w-5 h-5" />
               </motion.button>
               <button
                 onClick={onClose}
                 className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                title="Close Reminders Manager"
               >
                 <X className="w-5 h-5 text-slate-500" />
               </button>
@@ -347,6 +348,7 @@ export default function RemindersManager({ isOpen, onClose }: RemindersManagerPr
           }
           setShowAddForm(false);
           setEditingReminder(null);
+          // Form will reset automatically via useEffect when isOpen becomes false
         }}
         initialData={editingReminder}
       />
@@ -476,7 +478,21 @@ function ReminderForm({ isOpen, onClose, onSave, initialData }: ReminderFormProp
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  // Reset form when modal closes or when initialData changes
   useEffect(() => {
+    if (!isOpen) {
+      // Reset form when modal closes
+      setFormData({
+        title: '',
+        message: '',
+        reminder_time: '08:00',
+        days_of_week: [1, 2, 3, 4, 5],
+        enabled: true
+      });
+      setErrors({});
+      return;
+    }
+
     if (initialData) {
       setFormData({
         title: initialData.title,
@@ -494,7 +510,8 @@ function ReminderForm({ isOpen, onClose, onSave, initialData }: ReminderFormProp
         enabled: true
       });
     }
-  }, [initialData]);
+    setErrors({});
+  }, [initialData, isOpen]);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -520,8 +537,19 @@ function ReminderForm({ isOpen, onClose, onSave, initialData }: ReminderFormProp
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
+      // Ensure days_of_week array is sorted and contains valid values (1-7)
+      const validDays = formData.days_of_week
+        .filter(day => day >= 1 && day <= 7)
+        .sort((a, b) => a - b);
+      
+      if (validDays.length === 0) {
+        setErrors({ days_of_week: 'Select at least one day' });
+        return;
+      }
+
       onSave({
         ...formData,
+        days_of_week: validDays,
         reminder_time: formData.reminder_time + ':00' // Convert HH:MM to HH:MM:SS
       });
     }

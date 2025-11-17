@@ -233,10 +233,16 @@ export default function AuthPage() {
   const brand = (
     <header className="sticky top-0 z-10 bg-white/80 dark:bg-slate-950/80 backdrop-blur border-b border-slate-200/60 dark:border-slate-800/60 pt-[env(safe-area-inset-top)]">
       <div className="mx-auto max-w-7xl px-4 py-3 flex items-center gap-2">
-        <img src="/favicon.svg" alt="" className="h-6 w-6" />
-        <div className="font-bold tracking-tight text-slate-900 dark:text-slate-100 text-lg">
-          GoutDeau
-        </div>
+        <button
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          aria-label="Go to home"
+        >
+          <img src="/favicon.svg" alt="" className="h-6 w-6" />
+          <div className="font-bold tracking-tight text-slate-900 dark:text-slate-100 text-lg">
+            GoutDeau
+          </div>
+        </button>
         <div className="ml-auto hidden md:block text-sm text-slate-500 dark:text-slate-400">
           Track your water, earn achievements
         </div>
